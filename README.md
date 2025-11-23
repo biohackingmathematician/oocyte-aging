@@ -24,11 +24,15 @@ This uses a multi-dimensional Bayesian generative model to quantify variability 
 .
  ADSPROJECT_new.ipynb          # Main analysis notebook
  README.md                      # This file
- RESULTS.md                    # Detailed results summary
+ RESULTS.md                     # Detailed results summary
+ METRICS_EVALUATION.md         # Comprehensive metrics evaluation and recommendations
+ calculate_metrics.py          # Script to calculate validation metrics
  clinical_decision_framework_final.csv  # Clinical predictions
  gplvm_trajectory_analysis.png # GPLVM visualization
  risk_stratification.png       # Risk group visualization
  complete_results_summary.png  # Comprehensive summary
+ metrics_roc_curve.png         # ROC curve for risk stratification
+ metrics_pr_curve.png          # Precision-Recall curve
  zenodo_data/                  # Zenodo dataset (20 oocytes)
  geo_data/                     # GEO datasets (GSE155179, GSE95477)
  [Documentation files]
@@ -240,7 +244,27 @@ For full functionality, use Python 3.10-3.13.
    - 5% High Risk (Accelerated Agers)
 4. **Health Score**: Strong correlation with maturation trajectory (r=-0.79, p<0.001)
 
-See `RESULTS.md` for detailed results.
+### Model Performance Metrics
+
+**Risk Stratification Performance**:
+- AUC-ROC: 1.000 (perfect separation of high-risk group)
+- Precision-Recall AUC: 1.000
+
+**Clinical Health Score Validation**:
+- Discriminative ability (GV vs MI): AUC = 1.000
+- Effect size (Cohen's d): 2.161 (large effect)
+- Mann-Whitney U test: p < 0.001
+
+**Correlation Analysis**:
+- Cellular age Z vs Health Score: r = -0.837, p < 0.001 (strong negative correlation)
+- Cellular age Z vs Chronological Age: r = 0.270, p = 0.249 (moderate, not significant)
+
+**Latent Space Quality**:
+- Silhouette score (GV vs MI separation): -0.139
+- Davies-Bouldin index: 1.422
+- Calinski-Harabasz score: 1.417
+
+See `RESULTS.md` for detailed results and `METRICS_EVALUATION.md` for comprehensive metrics evaluation and recommendations.
 
 ---
 
