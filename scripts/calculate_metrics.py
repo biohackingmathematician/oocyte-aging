@@ -74,7 +74,7 @@ if 'risk_group' in df.columns and 'risk_score' in df.columns:
             plt.legend(fontsize=11)
             plt.grid(True, alpha=0.3)
             plt.tight_layout()
-            plt.savefig('../visualizations/../visualizations/metrics_roc_curve.png', dpi=300, bbox_inches='tight')
+            plt.savefig('../visualizations/metrics_roc_curve.png', dpi=300, bbox_inches='tight')
             plt.close()
             print(f"  ✓ Saved: ../visualizations/metrics_roc_curve.png")
             
@@ -92,7 +92,7 @@ if 'risk_group' in df.columns and 'risk_score' in df.columns:
             plt.legend(fontsize=11)
             plt.grid(True, alpha=0.3)
             plt.tight_layout()
-            plt.savefig('../visualizations/../visualizations/metrics_pr_curve.png', dpi=300, bbox_inches='tight')
+            plt.savefig('../visualizations/metrics_pr_curve.png', dpi=300, bbox_inches='tight')
             plt.close()
             print(f"  ✓ Saved: metrics_pr_curve.png")
             

@@ -1,0 +1,104 @@
+{
+  "latent_space": {
+    "silhouette_score": -0.13869299633436444,
+    "davies_bouldin_index": 1.422441879773087,
+    "calinski_harabasz_score": 1.4167047235509418
+  },
+  "correlations": {
+    "z_vs_age": {
+      "r": 0.2701169938991149,
+      "p": 0.2494084807152511
+    },
+    "z_vs_health_score": {
+      "r": -0.8372386729980688,
+      "p": 4.149728009109189e-06
+    }
+  },
+  "uncertainty_calibration": {
+    "coverage_95pct": 1.0,
+    "mean_uncertainty": 2152.974683566888,
+    "std_uncertainty": 3309.2290287824885,
+    "cv_uncertainty": 1.5370496708767631
+  },
+  "risk_stratification": {
+    "auc_roc": 1.0,
+    "pr_auc": 1.0,
+    "brier_score": 0.024320218873488043,
+    "sensitivity": 1.0,
+    "specificity": 1.0,
+    "ppv": 1.0,
+    "npv": 1.0,
+    "optimal_threshold": 3973.8369439170656
+  },
+  "chs_validation": {
+    "auc_gv_vs_mi": 1.0,
+    "mann_whitney_u": 84.0,
+    "mann_whitney_p": 5.159958720330237e-05,
+    "cohens_d": 2.1613429863295983,
+    "gv_mean": 94.15425189439618,
+    "mi_mean": 72.416579095812,
+    "mean_difference": 21.737672798584185
+  },
+  "chs_threshold_analysis": [
+    {
+      "threshold": 71.33083159212457,
+      "sensitivity": 1.0,
+      "specificity": 0.14285714285714285
+    },
+    {
+      "threshold": 73.28282338009191,
+      "sensitivity": 1.0,
+      "specificity": 0.35714285714285715
+    },
+    {
+      "threshold": 78.53062160344004,
+      "sensitivity": 1.0,
+      "specificity": 0.7142857142857143
+    },
+    {
+      "threshold": 91.60979186704003,
+      "sensitivity": 0.8333333333333334,
+      "specificity": 1.0
+    },
+    {
+      "threshold": 94.13144041436541,
+      "sensitivity": 0.3333333333333333,
+      "specificity": 1.0
+    }
+  ],
+  "calibration_data": [
+    {
+      "group": "Moderate Risk",
+      "mean_predicted": 925.5261414717793,
+      "observed_high_risk": 0.0,
+      "n": 6
+    },
+    {
+      "group": "Low Risk (Resilient Agers)",
+      "mean_predicted": 399.6692451993174,
+      "observed_high_risk": 0.0,
+      "n": 13
+    },
+    {
+      "group": "High Risk (Accelerated Agers)",
+      "mean_predicted": 3973.8369439170656,
+      "observed_high_risk": 1.0,
+      "n": 1
+    }
+  ],
+  "age_discrepancy": {
+    "mean_discrepancy": 1189602.1934796614,
+    "median_discrepancy": 0.9314265527369439,
+    "std_discrepancy": 2972333.4444829132,
+    "accelerated_agers_pct": 0.0,
+    "n_accelerated": 0
+  },
+  "heterogeneity": {
+    "cv_uncertainty": 1.5370496708767631,
+    "variance_ratio": 0.038450248648719314
+  },
+  "trajectory_fidelity": {
+    "kendalls_tau": 0.37994855211678213,
+    "kendalls_tau_p": 0.04776124267510368
+  }
+}
