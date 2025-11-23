@@ -1,0 +1,13 @@
+{
+	"n_targets": 204563,
+	"n_bootstraps": 0,
+	"n_processed": 38634067,
+	"n_pseudoaligned": 29550015,
+	"n_unique": 7392980,
+	"p_pseudoaligned": 76.5,
+	"p_unique": 19.1,
+	"kallisto_version": "0.46.1",
+	"index_version": 10,
+	"start_time": "Fri May 13 21:26:26 2022",
+	"call": "../software/kallisto/kallisto quant -i ../genome/Homo_sapiens.GRCh38.cdna.all.kallisto -o 53MII_S12_R1_001_kallisto --single -l 200 -s 20 -t 8 --bias 53MII_S12_R1_001.fastq.gz"
+}

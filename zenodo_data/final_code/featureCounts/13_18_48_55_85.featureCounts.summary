@@ -1,0 +1,15 @@
+Status	13-MII_S20_R1_001.hisat2.bam	17-MII_S24_R1_001.hisat2.bam	48-MI_S16_R1_001.hisat2.bam	55-VG_S13_R1_001.hisat2.bam	85-MII_S25_R1_001.hisat2.bam
+Assigned	15878339	15259410	21371400	20225798	32485306
+Unassigned_Unmapped	1335364	1170901	2687073	2602947	4330689
+Unassigned_Read_Type	0	0	0	0	0
+Unassigned_Singleton	0	0	0	0	0
+Unassigned_MappingQuality	0	0	0	0	0
+Unassigned_Chimera	0	0	0	0	0
+Unassigned_FragmentLength	0	0	0	0	0
+Unassigned_Duplicate	0	0	0	0	0
+Unassigned_MultiMapping	10108860	2493010	4227584	4518582	9168614
+Unassigned_Secondary	0	0	0	0	0
+Unassigned_NonSplit	0	0	0	0	0
+Unassigned_NoFeatures	2512935	2271836	3270013	4476015	4501960
+Unassigned_Overlapping_Length	0	0	0	0	0
+Unassigned_Ambiguity	1534321	1355163	2069924	1975612	3426012
