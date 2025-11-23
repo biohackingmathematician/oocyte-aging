@@ -74,8 +74,8 @@ if 'risk_group' in merged.columns:
     # Only plot stages that exist
     risk_by_stage = risk_by_stage.loc[risk_by_stage.sum(axis=1) > 0]
     if len(risk_by_stage) > 0:
-        risk_by_stage.plot(kind='bar', ax=ax2, 
-                          color=['#2ecc71', '#f39c12', '#e74c3c'], 
+        risk_by_stage.plot(kind='bar', ax=ax2,
+                          color=['#2ecc71', '#f39c12', '#e74c3c'],
                           alpha=0.7, edgecolor='black', width=0.8)
         ax2.set_xlabel('Developmental Stage', fontsize=12, fontweight='bold')
         ax2.set_ylabel('Number of Samples', fontsize=12, fontweight='bold')
@@ -89,7 +89,7 @@ if 'risk_group' in merged.columns:
         for container in ax2.containers:
             ax2.bar_label(container, fmt='%d', label_type='edge', fontsize=8)
     else:
-        ax2.text(0.5, 0.5, 'No risk group data available', 
+        ax2.text(0.5, 0.5, 'No risk group data available',
                 ha='center', va='center', transform=ax2.transAxes, fontsize=12)
         ax2.set_title('Risk Groups by Stage', fontsize=14, fontweight='bold', pad=15)
         ax2.axis('off')
@@ -99,7 +99,7 @@ else:
     if age_col in merged.columns:
         gv_ages = merged[merged['stage'] == 'GV'][age_col].dropna()
         mi_ages = merged[merged['stage'] == 'MI'][age_col].dropna()
-        
+
         if len(gv_ages) > 0 and len(mi_ages) > 0:
             bp2 = ax2.boxplot([gv_ages, mi_ages], labels=['GV', 'MI'], patch_artist=True,
                              boxprops=dict(facecolor='lightblue', alpha=0.7, edgecolor='black', linewidth=1.5),
@@ -110,12 +110,12 @@ else:
             ax2.spines['top'].set_visible(False)
             ax2.spines['right'].set_visible(False)
         else:
-            ax2.text(0.5, 0.5, 'Insufficient age data', 
+            ax2.text(0.5, 0.5, 'Insufficient age data',
                     ha='center', va='center', transform=ax2.transAxes, fontsize=12)
             ax2.set_title('Age Distribution by Stage', fontsize=14, fontweight='bold', pad=15)
             ax2.axis('off')
     else:
-        ax2.text(0.5, 0.5, 'No age data available', 
+        ax2.text(0.5, 0.5, 'No age data available',
                 ha='center', va='center', transform=ax2.transAxes, fontsize=12)
         ax2.set_title('Additional Information', fontsize=14, fontweight='bold', pad=15)
         ax2.axis('off')
@@ -151,7 +151,7 @@ if available_metric is None:
     print(" No health score or comparable metric found")
     print(f"  Available numeric columns: {merged.select_dtypes(include=[np.number]).columns.tolist()}")
     print("  Creating age-based comparison instead...")
-    
+
     # Use age as fallback
     available_metric = 'age'
     metric_name = 'Chronological Age (years)'
@@ -182,9 +182,9 @@ if len(values_by_stage) == 0:
     print(" Error: No data available for boxplot")
     exit(1)
 
-# Statistical test
+# Statistical hypothesis testing
 if len(values_by_stage) == 2:
-    stat, pval = stats.mannwhitneyu(values_by_stage[0], 
+    stat, pval = stats.mannwhitneyu(values_by_stage[0],
                                      values_by_stage[1],
                                      alternative='two-sided')
     print(f"\nStatistical test (Mann-Whitney U):")
@@ -202,7 +202,7 @@ fig, ax = plt.subplots(1, 1, figsize=(6, 7))
 stage_colors = {'GV': '#2ecc71', 'MI': '#e74c3c', 'MII': '#3498db'}
 box_colors = [stage_colors.get(labels[i].split('\n')[0], '#95a5a6') for i in range(len(labels))]
 
-bp = ax.boxplot(values_by_stage, 
+bp = ax.boxplot(values_by_stage,
                 tick_labels=[l.split('\n')[0] for l in labels],
                 patch_artist=True, widths=0.6, showmeans=True, meanline=False)
 
@@ -275,7 +275,7 @@ for i, (vals, label) in enumerate(zip(values_by_stage, labels)):
     print(f"  SD = {np.std(vals):.2f}")
     print(f"  Range = [{np.min(vals):.2f}, {np.max(vals):.2f}]")
 
-print("\n" + "="*70)
+print("")
 print(" Visualizations generated from CSV data!")
 print("")
 print("\nGenerated files:")

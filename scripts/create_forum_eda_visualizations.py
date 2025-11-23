@@ -74,26 +74,26 @@ if health_col in df_plot.columns:
 if len(pca_features) >= 2:
     # Create feature matrix
     X = np.column_stack(pca_features)
-    
+
     # Standardize
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
-    
+
     # Compute PCA
     pca = PCA(n_components=2)
     pca_coords = pca.fit_transform(X_scaled)
-    
+
     print(f" Computed PCA from {len(feature_names)} features: {feature_names}")
     print(f"  PC1 variance explained: {pca.explained_variance_ratio_[0]:.2%}")
     print(f"  PC2 variance explained: {pca.explained_variance_ratio_[1]:.2%}")
     print(f"  Total variance explained: {pca.explained_variance_ratio_.sum():.2%}")
-    
+
     # Create plot
     fig, ax = plt.subplots(1, 1, figsize=(9, 7))
-    
+
     # Stage colors
     stage_colors = {'GV': '#2ecc71', 'MI': '#e74c3c', 'MII': '#3498db'}
-    
+
     # Plot each stage separately for legend control
     for stage in ['GV', 'MI']:
         mask = df_plot['stage'] == stage
@@ -101,33 +101,33 @@ if len(pca_features) >= 2:
             ax.scatter(pca_coords[mask, 0], pca_coords[mask, 1],
                       c=stage_colors[stage], label=stage, s=150,
                       alpha=0.7, edgecolors='black', linewidth=1.5, zorder=3)
-    
+
     ax.set_xlabel('PC1', fontsize=13, fontweight='bold')
     ax.set_ylabel('PC2', fontsize=13, fontweight='bold')
-    ax.set_title('Global Structure: GV and MI Separate Along Main Axis', 
+    ax.set_title('Global Structure: GV and MI Separate Along Main Axis',
                 fontsize=14, fontweight='bold', pad=15)
-    
+
     # Add legend
-    ax.legend(title='Stage', title_fontsize=11, fontsize=11, 
+    ax.legend(title='Stage', title_fontsize=11, fontsize=11,
              loc='best', framealpha=0.9, edgecolor='black', fancybox=False)
-    
+
     # Grid and styling
     ax.grid(True, alpha=0.3, linestyle='--', zorder=0)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
-    
+
     # Add variance explained to axes labels
-    ax.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0]:.1%} variance)", 
+    ax.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0]:.1%} variance)",
                  fontsize=13, fontweight='bold')
-    ax.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1]:.1%} variance)", 
+    ax.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1]:.1%} variance)",
                  fontsize=13, fontweight='bold')
-    
+
     plt.tight_layout()
-    plt.savefig('../visualizations/forum_umap_pca_by_stage.png', dpi=300, bbox_inches='tight', 
+    plt.savefig('../visualizations/forum_umap_pca_by_stage.png', dpi=300, bbox_inches='tight',
                 facecolor='white', edgecolor='none')
     plt.close()
     print(" Saved: forum_umap_pca_by_stage.png")
-    
+
 else:
     print(" Not enough features for PCA - skipping plot")
 
@@ -147,7 +147,7 @@ if len(gv_scores) == 0 or len(mi_scores) == 0:
     print(" Error: Insufficient data for comparison")
     exit(1)
 
-# Statistical test
+# Statistical hypothesis testing
 stat, pval = stats.mannwhitneyu(gv_scores, mi_scores, alternative='two-sided')
 print(f"  Statistical test (Mann-Whitney U):")
 print(f"    U-statistic: {stat:.2f}")
@@ -199,7 +199,7 @@ if pval < 0.05:
     y_min = min([np.min(vals) for vals in data_to_plot])
     y_range = y_max - y_min
     bracket_height = y_max + y_range * 0.12
-    
+
     ax1.plot([1, 1, 2, 2], [y_max + y_range*0.05, bracket_height, bracket_height, y_max + y_range*0.05],
             'k-', linewidth=1.5)
     ax1.text(1.5, bracket_height + y_range*0.02, significance,
@@ -236,7 +236,7 @@ violin_df = pd.DataFrame({
     'Stage': np.repeat(violin_labels, [len(d) for d in violin_data])
 })
 
-parts = ax2.violinplot([gv_scores, mi_scores], positions=[1, 2], 
+parts = ax2.violinplot([gv_scores, mi_scores], positions=[1, 2],
                        widths=0.6, showmeans=True, showmedians=True)
 
 # Color violins
@@ -275,7 +275,7 @@ if pval < 0.05:
 ax2.set_xticks([1, 2])
 ax2.set_xticklabels(labels, fontsize=12)
 ax2.set_ylabel('Clinical Health Score', fontsize=13, fontweight='bold')
-ax2.set_title('Violin Plot: Health Score Distribution by Stage', 
+ax2.set_title('Violin Plot: Health Score Distribution by Stage',
              fontsize=14, fontweight='bold', pad=15)
 ax2.grid(True, alpha=0.3, linestyle='--', axis='y')
 ax2.spines['top'].set_visible(False)
@@ -291,11 +291,11 @@ for i, (scores, label) in enumerate(zip(data_to_plot, labels)):
             ha='center', va='top', fontsize=9,
             bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.8))
 
-plt.suptitle('GV Oocytes Look Healthier Than MI at Transcriptomic Level', 
+plt.suptitle('GV Oocytes Look Healthier Than MI at Transcriptomic Level',
              fontsize=15, fontweight='bold', y=0.98)
 
 plt.tight_layout(rect=[0, 0, 1, 0.96])
-plt.savefig('../visualizations/forum_health_score_by_stage.png', dpi=300, bbox_inches='tight', 
+plt.savefig('../visualizations/forum_health_score_by_stage.png', dpi=300, bbox_inches='tight',
             facecolor='white', edgecolor='none')
 plt.close()
 print(" Saved: forum_health_score_by_stage.png")
@@ -305,7 +305,7 @@ print(f"\nSummary statistics:")
 print(f"  GV: n={len(gv_scores)}, Mean={np.mean(gv_scores):.2f}, Median={np.median(gv_scores):.2f}, SD={np.std(gv_scores):.2f}")
 print(f"  MI: n={len(mi_scores)}, Mean={np.mean(mi_scores):.2f}, Median={np.median(mi_scores):.2f}, SD={np.std(mi_scores):.2f}")
 
-print("\n" + "="*70)
+print("")
 print(" Forum EDA Visualizations Created!")
 print("")
 print("\nGenerated files:")

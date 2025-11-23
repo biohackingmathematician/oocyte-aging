@@ -19,7 +19,7 @@ print("")
 print("COMBINED INTERVENTION PLOT: Pseudotime/Latent Age vs Health Score")
 print("")
 
-# Load Data
+# Data loading
 
 clinical_csv = '../data/clinical_decision_framework_final.csv'
 sample_csv = '../data/sample_metadata_with_age.csv'
@@ -31,12 +31,12 @@ if not os.path.exists(clinical_csv):
 df = pd.read_csv(clinical_csv, index_col=0)
 print(f" Loaded clinical data: {len(df)} samples")
 
-# Load sample metadata for stage and potential pseudotime
+# Sample metadata loading for stage and potential pseudotime
 if os.path.exists(sample_csv):
     sample_df = pd.read_csv(sample_csv)
     # Merge on sample name
     if 'sample' in sample_df.columns:
-        df = df.merge(sample_df[['sample', 'stage']], 
+        df = df.merge(sample_df[['sample', 'stage']],
                      left_index=True, right_on='sample', how='left')
         df.set_index('sample', inplace=True, drop=False)
         print(f" Merged stage information")
@@ -47,31 +47,31 @@ else:
 
 if 'health_score' not in df.columns and 'oocyte_health_score' not in df.columns:
     print("\n Health score not found. Computing proxy from available data...")
-    
+
     # Proxy health score based on:
     # 1. Inverse of risk_score (lower risk = higher health)
     # 2. Stage (GV = higher health than MI)
     # 3. Inverse of uncertainty (lower uncertainty = higher confidence = higher health)
-    
+
     # Normalize risk_score (inverse)
     if 'risk_score' in df.columns:
         risk_norm = 1.0 - (df['risk_score'] - df['risk_score'].min()) / (df['risk_score'].max() - df['risk_score'].min() + 1e-8)
     else:
         risk_norm = np.ones(len(df)) * 0.5
-    
+
     # Stage contribution (GV = 1.0, MI = 0.6, MII = 0.4)
     stage_map = {'GV': 1.0, 'MI': 0.6, 'MII': 0.4, 'Unknown': 0.5}
     stage_score = df['stage'].map(stage_map).fillna(0.5).values
-    
+
     # Uncertainty contribution (inverse, normalized)
     if 'cellular_age_uncertainty' in df.columns:
         unc_norm = 1.0 - (df['cellular_age_uncertainty'] - df['cellular_age_uncertainty'].min()) / (df['cellular_age_uncertainty'].max() - df['cellular_age_uncertainty'].min() + 1e-8)
     else:
         unc_norm = np.ones(len(df)) * 0.5
-    
+
     # Weighted combination
     health_score = (0.4 * risk_norm + 0.4 * stage_score + 0.2 * unc_norm) * 100
-    
+
     df['health_score'] = health_score
     print(f" Computed proxy health score (range: {df['health_score'].min():.1f}-{df['health_score'].max():.1f})")
 else:
@@ -159,7 +159,7 @@ optimal_y_range = [optimal_threshold, optimal_threshold, y_max, y_max]
 optimal_mask = (y_data >= optimal_threshold) & (uncertainty <= uncertainty_low_threshold)
 
 # Shade the high CHS region (above optimal threshold)
-ax.fill_between([x_min, x_max], optimal_threshold, y_max, 
+ax.fill_between([x_min, x_max], optimal_threshold, y_max,
                 alpha=0.15, color='green', label='High CHS Region')
 
 # Additionally shade points that are in optimal window (high CHS + low uncertainty)
@@ -172,51 +172,51 @@ if optimal_mask.sum() > 0:
         opt_y_min, opt_y_max = optimal_y.min(), optimal_y.max()
         # Shade a tighter region
         ax.fill_between([opt_x_min, opt_x_max], opt_y_min, opt_y_max,
-                        alpha=0.25, color='lime', 
+                        alpha=0.25, color='lime',
                         label=f'Optimal Intervention Window\n(High CHS + Low σ, n={optimal_mask.sum()})')
 
 # Plot scatter points
-scatter = ax.scatter(x_data, y_data, s=dot_sizes, c=colors, 
+scatter = ax.scatter(x_data, y_data, s=dot_sizes, c=colors,
                        alpha=0.7, edgecolors='black', linewidths=1.5,
                        zorder=5)
 
 # Add colorbar for uncertainty
-cbar = plt.colorbar(plt.cm.ScalarMappable(cmap=plt.cm.RdYlBu_r, 
-                                         norm=plt.Normalize(vmin=uncertainty.min(), 
+cbar = plt.colorbar(plt.cm.ScalarMappable(cmap=plt.cm.RdYlBu_r,
+                                         norm=plt.Normalize(vmin=uncertainty.min(),
                                                            vmax=uncertainty.max())),
                    ax=ax, fraction=0.046, pad=0.04)
 cbar.set_label('Uncertainty (σ)', fontsize=12, fontweight='bold')
 
 # Add horizontal threshold lines
-ax.axhline(y=critical_threshold, color='darkred', linestyle='--', 
+ax.axhline(y=critical_threshold, color='darkred', linestyle='--',
           linewidth=2.5, label=f'Critical Threshold ({critical_threshold:.1f})', zorder=3)
-ax.axhline(y=warning_threshold, color='orange', linestyle='--', 
+ax.axhline(y=warning_threshold, color='orange', linestyle='--',
           linewidth=2.5, label=f'Warning Threshold ({warning_threshold:.1f})', zorder=3)
-ax.axhline(y=optimal_threshold, color='green', linestyle='--', 
+ax.axhline(y=optimal_threshold, color='green', linestyle='--',
           linewidth=2.5, label=f'Optimal Threshold ({optimal_threshold:.1f})', zorder=3)
 
 # Add text annotations for thresholds
-ax.text(x_max * 0.98, critical_threshold, 'Critical', 
+ax.text(x_max * 0.98, critical_threshold, 'Critical',
        ha='right', va='bottom', fontsize=10, fontweight='bold',
        bbox=dict(boxstyle='round,pad=0.3', facecolor='red', alpha=0.3))
-ax.text(x_max * 0.98, warning_threshold, 'Warning', 
+ax.text(x_max * 0.98, warning_threshold, 'Warning',
        ha='right', va='bottom', fontsize=10, fontweight='bold',
        bbox=dict(boxstyle='round,pad=0.3', facecolor='orange', alpha=0.3))
-ax.text(x_max * 0.98, optimal_threshold, 'Optimal', 
+ax.text(x_max * 0.98, optimal_threshold, 'Optimal',
        ha='right', va='bottom', fontsize=10, fontweight='bold',
        bbox=dict(boxstyle='round,pad=0.3', facecolor='green', alpha=0.3))
 
 # Labels and title
 ax.set_xlabel(x_label, fontsize=14, fontweight='bold')
 ax.set_ylabel(y_label, fontsize=14, fontweight='bold')
-ax.set_title('Intervention Decision Framework:\nPseudotime/Latent Age vs Health Score with Uncertainty', 
+ax.set_title('Intervention Decision Framework:\nPseudotime/Latent Age vs Health Score with Uncertainty',
             fontsize=16, fontweight='bold', pad=15)
 
 # Add legend
 legend_elements = [
-    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', 
+    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue',
               markersize=10, label='Low Uncertainty', markeredgecolor='black'),
-    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='red', 
+    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='red',
               markersize=10, label='High Uncertainty', markeredgecolor='black'),
     mpatches.Patch(facecolor='green', alpha=0.15, label='High CHS Region'),
     mpatches.Patch(facecolor='lime', alpha=0.25, label='Optimal Window (High CHS + Low σ)')
@@ -224,7 +224,7 @@ legend_elements = [
 
 # Combine with threshold lines
 handles, labels = ax.get_legend_handles_labels()
-ax.legend(handles=handles, loc='upper left', fontsize=10, 
+ax.legend(handles=handles, loc='upper left', fontsize=10,
          framealpha=0.95, frameon=True, fancybox=True, shadow=True)
 
 # Grid

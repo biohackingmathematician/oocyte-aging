@@ -68,7 +68,7 @@ colors_risk = {
 ax_a = fig.add_subplot(gs[0, 0])
 stage_counts = merged['stage'].value_counts()
 bar_colors = [colors_stage.get(s, '#95a5a6') for s in stage_counts.index]
-bars_a = ax_a.bar(stage_counts.index, stage_counts.values, color=bar_colors, 
+bars_a = ax_a.bar(stage_counts.index, stage_counts.values, color=bar_colors,
                  alpha=0.8, edgecolor='black', linewidth=2, width=0.6)
 ax_a.set_xlabel('Developmental Stage', fontsize=11, fontweight='bold')
 ax_a.set_ylabel('Number of Oocytes', fontsize=11, fontweight='bold')
@@ -86,7 +86,7 @@ ax_b = fig.add_subplot(gs[0, 1])
 if 'risk_group' in merged.columns and merged['risk_group'].notna().sum() > 0:
     risk_counts = merged['risk_group'].value_counts()
     bar_colors_b = [colors_risk.get(r, '#95a5a6') for r in risk_counts.index]
-    bars_b = ax_b.bar(range(len(risk_counts)), risk_counts.values, 
+    bars_b = ax_b.bar(range(len(risk_counts)), risk_counts.values,
                      color=bar_colors_b, alpha=0.8, edgecolor='black', linewidth=2, width=0.6)
     ax_b.set_xticks(range(len(risk_counts)))
     ax_b.set_xticklabels([r.replace(' Risk', '\nRisk').replace(' (Resilient Agers)', '').replace(' (Accelerated Agers)', '')
@@ -101,7 +101,7 @@ if 'risk_group' in merged.columns and merged['risk_group'].notna().sum() > 0:
         ax_b.text(bar.get_x() + bar.get_width()/2., height, f'{int(height)}',
                  ha='center', va='bottom', fontweight='bold', fontsize=11)
 else:
-    ax_b.text(0.5, 0.5, 'Risk group data\nnot available', 
+    ax_b.text(0.5, 0.5, 'Risk group data\nnot available',
              ha='center', va='center', transform=ax_b.transAxes, fontsize=11,
              bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
     ax_b.set_title('B. Risk Group Distribution', fontsize=12, fontweight='bold', pad=10)
@@ -117,7 +117,7 @@ if 'cellular_age_z' in merged.columns and 'stage' in merged.columns:
         if len(stage_data) > 0:
             stages_to_plot.append(stage)
             data_to_plot.append(stage_data)
-    
+
     if len(data_to_plot) > 0:
         bp_c = ax_c.boxplot(data_to_plot, tick_labels=stages_to_plot, patch_artist=True,
                            boxprops=dict(facecolor='lightblue', alpha=0.7, edgecolor='black', linewidth=1.5),
@@ -129,13 +129,13 @@ if 'cellular_age_z' in merged.columns and 'stage' in merged.columns:
         ax_c.spines['top'].set_visible(False)
         ax_c.spines['right'].set_visible(False)
     else:
-        ax_c.text(0.5, 0.5, 'Cellular age data\nnot available', 
+        ax_c.text(0.5, 0.5, 'Cellular age data\nnot available',
                  ha='center', va='center', transform=ax_c.transAxes, fontsize=10,
                  bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
         ax_c.set_title('C. Cellular Age by Stage', fontsize=12, fontweight='bold', pad=10)
         ax_c.axis('off')
 else:
-    ax_c.text(0.5, 0.5, 'Cellular age data\nnot available', 
+    ax_c.text(0.5, 0.5, 'Cellular age data\nnot available',
              ha='center', va='center', transform=ax_c.transAxes, fontsize=10,
              bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
     ax_c.set_title('C. Cellular Age by Stage', fontsize=12, fontweight='bold', pad=10)
@@ -152,13 +152,13 @@ if age_col in merged.columns and merged[age_col].notna().sum() > 0:
     ax_d.grid(True, alpha=0.3, axis='y', linestyle='--')
     ax_d.spines['top'].set_visible(False)
     ax_d.spines['right'].set_visible(False)
-    
+
     # Add mean line
     mean_age = ages.mean()
     ax_d.axvline(mean_age, color='red', linestyle='--', linewidth=2, label=f'Mean: {mean_age:.1f} years')
     ax_d.legend(fontsize=9)
 else:
-    ax_d.text(0.5, 0.5, 'Age data\nnot available', 
+    ax_d.text(0.5, 0.5, 'Age data\nnot available',
              ha='center', va='center', transform=ax_d.transAxes, fontsize=10,
              bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
     ax_d.set_title('D. Age Distribution', fontsize=12, fontweight='bold', pad=10)
@@ -177,7 +177,7 @@ if health_col in merged.columns and 'stage' in merged.columns:
         if len(stage_data) > 0:
             stages_to_plot.append(stage)
             data_to_plot.append(stage_data)
-    
+
     if len(data_to_plot) > 0:
         bp_e = ax_e.boxplot(data_to_plot, tick_labels=stages_to_plot, patch_artist=True,
                            boxprops=dict(facecolor='lightgreen', alpha=0.7, edgecolor='black', linewidth=1.5),
@@ -188,19 +188,19 @@ if health_col in merged.columns and 'stage' in merged.columns:
         ax_e.grid(True, alpha=0.3, axis='y', linestyle='--')
         ax_e.spines['top'].set_visible(False)
         ax_e.spines['right'].set_visible(False)
-        
+
         # Add threshold lines
         ax_e.axhline(79.9, color='blue', linestyle='--', linewidth=1.5, alpha=0.7, label='Optimal (79.9)')
         ax_e.axhline(53.2, color='red', linestyle='--', linewidth=1.5, alpha=0.7, label='Critical (53.2)')
         ax_e.legend(fontsize=8, loc='upper right')
     else:
-        ax_e.text(0.5, 0.5, 'Health score data\nnot available', 
+        ax_e.text(0.5, 0.5, 'Health score data\nnot available',
                  ha='center', va='center', transform=ax_e.transAxes, fontsize=10,
                  bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
         ax_e.set_title('E. Health Score by Stage', fontsize=12, fontweight='bold', pad=10)
         ax_e.axis('off')
 else:
-    ax_e.text(0.5, 0.5, 'Health score data\nnot available', 
+    ax_e.text(0.5, 0.5, 'Health score data\nnot available',
              ha='center', va='center', transform=ax_e.transAxes, fontsize=10,
              bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
     ax_e.set_title('E. Health Score by Stage', fontsize=12, fontweight='bold', pad=10)
@@ -221,10 +221,10 @@ if 'cellular_age_z' in merged.columns and age_col in merged.columns:
         ax_f.grid(True, alpha=0.3, linestyle='--')
         ax_f.spines['top'].set_visible(False)
         ax_f.spines['right'].set_visible(False)
-        
+
         if 'cellular_age_uncertainty' in merged.columns:
             plt.colorbar(scatter, ax=ax_f, label='Uncertainty', fraction=0.046, pad=0.04)
-        
+
         # Add correlation
         if mask.sum() > 2:
             corr, pval = stats.pearsonr(merged.loc[mask, age_col], merged.loc[mask, 'cellular_age_z'])
@@ -232,13 +232,13 @@ if 'cellular_age_z' in merged.columns and age_col in merged.columns:
                      transform=ax_f.transAxes, fontsize=11, fontweight='bold',
                      verticalalignment='top', bbox=dict(boxstyle='round', facecolor='white', alpha=0.9))
     else:
-        ax_f.text(0.5, 0.5, 'Insufficient data\nfor correlation analysis', 
+        ax_f.text(0.5, 0.5, 'Insufficient data\nfor correlation analysis',
                  ha='center', va='center', transform=ax_f.transAxes, fontsize=12,
                  bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
         ax_f.set_title('F. Cellular vs Chronological Age', fontsize=13, fontweight='bold', pad=12)
         ax_f.axis('off')
 else:
-    ax_f.text(0.5, 0.5, 'Age or cellular age\ndata not available', 
+    ax_f.text(0.5, 0.5, 'Age or cellular age\ndata not available',
              ha='center', va='center', transform=ax_f.transAxes, fontsize=12,
              bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
     ax_f.set_title('F. Cellular vs Chronological Age', fontsize=13, fontweight='bold', pad=12)
@@ -254,7 +254,7 @@ if 'cellular_age_uncertainty' in merged.columns and 'stage' in merged.columns:
         if len(stage_data) > 0:
             stages_to_plot.append(stage)
             data_to_plot.append(stage_data)
-    
+
     if len(data_to_plot) > 0:
         bp_g = ax_g.boxplot(data_to_plot, tick_labels=stages_to_plot, patch_artist=True,
                            boxprops=dict(facecolor='lightcoral', alpha=0.7, edgecolor='black', linewidth=1.5),
@@ -266,13 +266,13 @@ if 'cellular_age_uncertainty' in merged.columns and 'stage' in merged.columns:
         ax_g.spines['top'].set_visible(False)
         ax_g.spines['right'].set_visible(False)
     else:
-        ax_g.text(0.5, 0.5, 'Uncertainty data\nnot available', 
+        ax_g.text(0.5, 0.5, 'Uncertainty data\nnot available',
                  ha='center', va='center', transform=ax_g.transAxes, fontsize=10,
                  bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
         ax_g.set_title('G. Uncertainty by Stage', fontsize=12, fontweight='bold', pad=10)
         ax_g.axis('off')
 else:
-    ax_g.text(0.5, 0.5, 'Uncertainty data\nnot available', 
+    ax_g.text(0.5, 0.5, 'Uncertainty data\nnot available',
              ha='center', va='center', transform=ax_g.transAxes, fontsize=10,
              bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
     ax_g.set_title('G. Uncertainty by Stage', fontsize=12, fontweight='bold', pad=10)
@@ -287,11 +287,11 @@ if 'risk_group' in merged.columns and 'stage' in merged.columns:
     risk_by_stage = risk_by_stage.loc[risk_by_stage.sum(axis=1) > 0]
     risk_cols = ['Low Risk (Resilient Agers)', 'Moderate Risk', 'High Risk (Accelerated Agers)']
     existing_cols = [col for col in risk_cols if col in risk_by_stage.columns]
-    
+
     if len(risk_by_stage) > 0 and len(existing_cols) > 0:
         risk_by_stage = risk_by_stage[existing_cols]
         colors_list = [colors_risk.get(col, '#95a5a6') for col in risk_by_stage.columns]
-        
+
         risk_by_stage.plot(kind='bar', ax=ax_h, color=colors_list,
                           alpha=0.8, edgecolor='black', linewidth=1.5, width=0.7)
         ax_h.set_xlabel('Developmental Stage', fontsize=12, fontweight='bold')
@@ -302,18 +302,18 @@ if 'risk_group' in merged.columns and 'stage' in merged.columns:
         ax_h.spines['top'].set_visible(False)
         ax_h.spines['right'].set_visible(False)
         plt.setp(ax_h.xaxis.get_majorticklabels(), rotation=0, ha='center')
-        
+
         for container in ax_h.containers:
             labels = [f'{int(v)}' if v > 0 else '' for v in container.datavalues]
             ax_h.bar_label(container, labels=labels, label_type='edge', fontsize=9, padding=3)
     else:
-        ax_h.text(0.5, 0.5, 'Risk group by stage\ndata not available', 
+        ax_h.text(0.5, 0.5, 'Risk group by stage\ndata not available',
                  ha='center', va='center', transform=ax_h.transAxes, fontsize=12,
                  bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
         ax_h.set_title('H. Risk Groups by Developmental Stage', fontsize=13, fontweight='bold', pad=12)
         ax_h.axis('off')
 else:
-    ax_h.text(0.5, 0.5, 'Risk or stage data\nnot available', 
+    ax_h.text(0.5, 0.5, 'Risk or stage data\nnot available',
              ha='center', va='center', transform=ax_h.transAxes, fontsize=12,
              bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
     ax_h.set_title('H. Risk Groups by Developmental Stage', fontsize=13, fontweight='bold', pad=12)
@@ -360,24 +360,24 @@ if health_col in merged.columns and 'stage' in merged.columns:
 # Risk groups
 if 'risk_group' in merged.columns and merged['risk_group'].notna().sum() > 0:
     risk_counts = merged['risk_group'].value_counts()
-    risk_summary = ", ".join([f"{group.replace(' Risk', '').replace(' (Resilient Agers)', '').replace(' (Accelerated Agers)', '')}: {count}" 
+    risk_summary = ", ".join([f"{group.replace(' Risk', '').replace(' (Resilient Agers)', '').replace(' (Accelerated Agers)', '')}: {count}"
                              for group, count in risk_counts.items()])
     summary_parts.append(f"• Risk Groups: {risk_summary}")
 
 summary_text = "\n".join(summary_parts)
 
 ax_i.text(0.05, 0.95, summary_text, ha='left', va='top', transform=ax_i.transAxes,
-         fontsize=12, family='monospace', 
+         fontsize=12, family='monospace',
          bbox=dict(boxstyle='round', facecolor='lightgray', alpha=0.3, pad=10))
 
 fig.suptitle('Complete Results Summary: Oocyte Aging Analysis', fontsize=16, fontweight='bold', y=0.995)
 
-plt.savefig('../visualizations/complete_results_summary.png', dpi=300, bbox_inches='tight', 
+plt.savefig('../visualizations/complete_results_summary.png', dpi=300, bbox_inches='tight',
             facecolor='white', edgecolor='none', pad_inches=0.2)
 plt.close()
 
 print(" Saved: complete_results_summary.png")
-print("\n" + "="*70)
+print("")
 print(" Complete Results Summary Generated!")
 print("")
 print("\nAll panels populated with available data.")
