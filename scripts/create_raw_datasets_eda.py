@@ -22,9 +22,9 @@ print("")
 sample_csv = '../data/sample_metadata_with_age.csv'
 if os.path.exists(sample_csv):
     metadata = pd.read_csv(sample_csv)
-    print(f" Loaded metadata: {len(metadata)} samples")
+    print(f"Loaded metadata: {len(metadata)} samples")
 else:
-    print(" Error: sample_metadata_with_age.csv not found")
+    print("Error: sample_metadata_with_age.csv not found")
     exit(1)
 
 # Load clinical data for age information
@@ -60,19 +60,19 @@ if os.path.exists(geo_dir):
 
     # Note: We'll extract basic info from metadata if GEO files exist
     # For detailed parsing, would need GEOparse library
-    print(f"  GEO data directory found: {geo_dir}")
+    print("GEO data directory found: {geo_dir}")
     if os.path.exists(gse155179_file):
-        print(f"   GSE155179 found")
+        print(" GSE155179 found")
         # From EXECUTION_RESULTS_SUMMARY: 12 samples with age data (30-40 years)
         geo_info['GSE155179']['samples'] = 12
         geo_info['GSE155179']['ages'] = list(range(30, 41))  # Estimated range
     if os.path.exists(gse95477_file):
-        print(f"   GSE95477 found")
+        print(" GSE95477 found")
         # From EXECUTION_RESULTS_SUMMARY: 32 samples with age data
         geo_info['GSE95477']['samples'] = 32
         geo_info['GSE95477']['ages'] = list(range(25, 36))  # Estimated range
 else:
-    print(f"   GEO data directory not found (expected if not downloaded)")
+    print(" GEO data directory not found (expected if not downloaded)")
 
 # Parse Zenodo Dataset Information
 
@@ -87,7 +87,7 @@ if os.path.exists(zenodo_dir):
                      if os.path.isdir(os.path.join(zenodo_dir, d))]
     zenodo_samples = [d for d in kallisto_dirs]
 
-    print(f"   Found {len(zenodo_samples)} Zenodo samples")
+    print(" Found {len(zenodo_samples)} Zenodo samples")
 
     # Try to extract sequencing info from run_info.json files
     zenodo_info = {'total_reads': [], 'pseudoaligned_reads': []}
@@ -106,9 +106,9 @@ if os.path.exists(zenodo_dir):
                 pass
 
     if zenodo_info['total_reads']:
-        print(f"  Sample sequencing depth: {np.mean(zenodo_info['total_reads'])/1e6:.1f}M reads (mean)")
+        print("Sample sequencing depth: {np.mean(zenodo_info['total_reads'])/1e6:.1f}M reads (mean)")
 else:
-    print(f"   Zenodo data directory not found")
+    print(" Zenodo data directory not found")
 
 # Create EDA Figure
 
@@ -347,8 +347,8 @@ print("")
 print(" Raw Datasets EDA Complete!")
 print("")
 print("\nSummary:")
-print(f"  • Zenodo samples: {len(zenodo_samples) if zenodo_samples else 20}")
-print(f"  • GEO GSE155179: {geo_info['GSE155179']['samples']} samples")
-print(f"  • GEO GSE95477: {geo_info['GSE95477']['samples']} samples")
-print(f"  • Total: {total_samples} samples")
+print("• Zenodo samples: {len(zenodo_samples) if zenodo_samples else 20}")
+print("• GEO GSE155179: {geo_info['GSE155179']['samples']} samples")
+print("• GEO GSE95477: {geo_info['GSE95477']['samples']} samples")
+print("• Total: {total_samples} samples")
 

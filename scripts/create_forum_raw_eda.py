@@ -22,11 +22,11 @@ sample_csv = '../data/sample_metadata_with_age.csv'
 clinical_csv = '../data/clinical_decision_framework_final.csv'
 
 if not os.path.exists(sample_csv):
-    print(" Error: sample_metadata_with_age.csv not found")
+    print("Error: sample_metadata_with_age.csv not found")
     exit(1)
 
 metadata = pd.read_csv(sample_csv)
-print(f" Loaded metadata: {len(metadata)} samples")
+print(f"Loaded metadata: {len(metadata)} samples")
 
 # Merge with clinical data if available for age
 if os.path.exists(clinical_csv):
@@ -163,14 +163,14 @@ if 'stage' in merged.columns:
     stage_counts = merged['stage'].value_counts()
     print(f"\n  Stage distribution:")
     for stage, count in stage_counts.items():
-        print(f"    {stage}: {count} cells")
+        print("{stage}: {count} cells")
 
 if 'age_group' in merged.columns:
     age_counts = merged['age_group'].value_counts()
-    print(f"  Age group distribution:")
+    print("Age group distribution:")
     for group, count in age_counts.items():
         pct = count / len(merged) * 100
-        print(f"    {group}: {count} cells ({pct:.0f}%)")
+        print("{group}: {count} cells ({pct:.0f}%)")
 
 # FIGURE 2: Expression Matrix Snapshot (Heatmap)
 
@@ -183,13 +183,13 @@ sample_names = []
 gene_names = None
 
 if os.path.exists(zenodo_dir):
-    print("  Attempting to load expression data from Kallisto abundance files...")
+    print("Attempting to load expression data from Kallisto abundance files...")
 
     # Find all abundance.tsv files
     abundance_files = sorted(glob.glob(os.path.join(zenodo_dir, '*/abundance.tsv')))
 
     if abundance_files:
-        print(f"  Found {len(abundance_files)} abundance.tsv files")
+        print("Found {len(abundance_files)} abundance.tsv files")
 
         # Read first file to get gene names
         first_df = pd.read_csv(abundance_files[0], sep='\t', comment='#')
@@ -209,13 +209,13 @@ if os.path.exists(zenodo_dir):
             tpm_matrix.append(tpm_values)
 
             if i < 3:  # Print first few for debugging
-                print(f"    {sample_name}: {len(tpm_values)} transcripts, "
+                print("{sample_name}: {len(tpm_values)} transcripts, "
                       f"mean TPM: {np.mean(tpm_values):.2f}")
 
         # Convert to numpy array
         expression_data = np.array(tpm_matrix).T  # Transpose: genes x cells
 
-        print(f"   Loaded expression matrix: {expression_data.shape[0]} genes × {expression_data.shape[1]} cells")
+        print(" Loaded expression matrix: {expression_data.shape[0]} genes × {expression_data.shape[1]} cells")
 
         # Select top variable genes
         # Calculate variance for each gene
@@ -227,7 +227,7 @@ if os.path.exists(zenodo_dir):
         top_var_data = expression_data[top_var_indices, :]
         top_var_gene_names = gene_names[top_var_indices]
 
-        print(f"   Selected top {top_n_genes} variable genes")
+        print(" Selected top {top_n_genes} variable genes")
 
         # Log transform
         top_var_data_log = np.log1p(top_var_data)
@@ -315,10 +315,10 @@ if os.path.exists(zenodo_dir):
         print(" Saved: forum_raw_expression_heatmap.png")
 
     else:
-        print("   No abundance.tsv files found - creating placeholder")
+        print(" No abundance.tsv files found - creating placeholder")
         create_placeholder_heatmap()
 else:
-    print("   Zenodo data directory not found - creating placeholder")
+    print(" Zenodo data directory not found - creating placeholder")
     create_placeholder_heatmap()
 
 def create_placeholder_heatmap():
@@ -363,9 +363,9 @@ print("")
 print(" Forum Raw EDA Visualizations Complete!")
 print("")
 print("\nGenerated files:")
-print("   forum_raw_sample_composition.png - Sample composition (stage + age)")
-print("   forum_raw_expression_heatmap.png - Expression matrix snapshot")
+print(" forum_raw_sample_composition.png - Sample composition (stage + age)")
+print(" forum_raw_expression_heatmap.png - Expression matrix snapshot")
 print("\nThese visualizations show:")
-print("  1. Raw labels: 20 oocytes, 6 GV + 14 MI, age distribution")
-print("  2. Expression matrix: Top variable genes across cells, ordered by stage")
+print("1. Raw labels: 20 oocytes, 6 GV + 14 MI, age distribution")
+print("2. Expression matrix: Top variable genes across cells, ordered by stage")
 

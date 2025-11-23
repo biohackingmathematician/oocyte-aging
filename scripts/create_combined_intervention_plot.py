@@ -25,11 +25,11 @@ clinical_csv = '../data/clinical_decision_framework_final.csv'
 sample_csv = '../data/sample_metadata_with_age.csv'
 
 if not os.path.exists(clinical_csv):
-    print(" Error: clinical_decision_framework_final.csv not found")
+    print("Error: clinical_decision_framework_final.csv not found")
     exit(1)
 
 df = pd.read_csv(clinical_csv, index_col=0)
-print(f" Loaded clinical data: {len(df)} samples")
+print(f"Loaded clinical data: {len(df)} samples")
 
 # Sample metadata loading for stage and potential pseudotime
 if os.path.exists(sample_csv):
@@ -39,7 +39,7 @@ if os.path.exists(sample_csv):
         df = df.merge(sample_df[['sample', 'stage']],
                      left_index=True, right_on='sample', how='left')
         df.set_index('sample', inplace=True, drop=False)
-        print(f" Merged stage information")
+        print(f"Merged stage information")
 else:
     df['stage'] = 'Unknown'
 
@@ -95,7 +95,7 @@ elif 'cellular_age_z' in df.columns:
     x_label = 'Cellular Age (Latent Z)'
     print(f" Using cellular age Z (range: {x_data.min():.3f}-{x_data.max():.3f})")
 else:
-    print(" Error: No pseudotime or cellular_age_z found")
+    print("Error: No pseudotime or cellular_age_z found")
     exit(1)
 
 # Get Y-axis: Health Score
@@ -120,16 +120,16 @@ warning_threshold = np.percentile(y_data, 50)   # Bottom 50% = warning
 optimal_threshold = np.percentile(y_data, 75)   # Top 25% = optimal
 
 print(f"\nThresholds:")
-print(f"  Critical: {critical_threshold:.1f} (bottom 25%)")
-print(f"  Warning: {warning_threshold:.1f} (median)")
-print(f"  Optimal: {optimal_threshold:.1f} (top 25%)")
+print("Critical: {critical_threshold:.1f} (bottom 25%)")
+print("Warning: {warning_threshold:.1f} (median)")
+print("Optimal: {optimal_threshold:.1f} (top 25%)")
 
 # Define Optimal Intervention Window
 
 # Optimal window: High CHS (>= optimal_threshold) AND Low uncertainty (bottom 33%)
 uncertainty_low_threshold = np.percentile(uncertainty, 33)  # Bottom 33% = low uncertainty
 
-print(f"  Low uncertainty threshold: {uncertainty_low_threshold:.2f} (bottom 33%)")
+print("Low uncertainty threshold: {uncertainty_low_threshold:.2f} (bottom 33%)")
 
 # Create Combined Plot
 
@@ -262,13 +262,13 @@ print(f"{'='*70}")
 print(f"Total cells: {len(df)}")
 print(f"Optimal intervention window (High CHS + Low σ): {optimal_mask.sum()} cells ({optimal_mask.sum()/len(df)*100:.1f}%)")
 print(f"\nHealth Score Statistics:")
-print(f"  Mean: {y_data.mean():.1f} ± {y_data.std():.1f}")
-print(f"  Range: [{y_data.min():.1f}, {y_data.max():.1f}]")
+print("Mean: {y_data.mean():.1f} ± {y_data.std():.1f}")
+print("Range: [{y_data.min():.1f}, {y_data.max():.1f}]")
 print(f"\nUncertainty Statistics:")
-print(f"  Mean: {uncertainty.mean():.2f} ± {uncertainty.std():.2f}")
-print(f"  Range: [{uncertainty.min():.2f}, {uncertainty.max():.2f}]")
+print("Mean: {uncertainty.mean():.2f} ± {uncertainty.std():.2f}")
+print("Range: [{uncertainty.min():.2f}, {uncertainty.max():.2f}]")
 print(f"\nX-axis ({x_label}):")
-print(f"  Range: [{x_data.min():.3f}, {x_data.max():.3f}]")
+print("Range: [{x_data.min():.3f}, {x_data.max():.3f}]")
 
 print(f"\n{'='*70}")
 print(" Combined intervention plot complete!")

@@ -25,11 +25,11 @@ clinical_csv = '../data/clinical_decision_framework_final.csv'
 sample_csv = '../data/sample_metadata_with_age.csv'
 
 if not os.path.exists(clinical_csv):
-    print(" Error: clinical_decision_framework_final.csv not found")
+    print("Error: clinical_decision_framework_final.csv not found")
     exit(1)
 
 df = pd.read_csv(clinical_csv, index_col=0)
-print(f" Loaded clinical data: {len(df)} samples")
+print(f"Loaded clinical data: {len(df)} samples")
 
 # Sample metadata loading
 if os.path.exists(sample_csv):
@@ -38,7 +38,7 @@ if os.path.exists(sample_csv):
         df = df.merge(sample_df[['sample', 'stage']],
                      left_index=True, right_on='sample', how='left')
         df.set_index('sample', inplace=True, drop=False)
-        print(f" Merged stage information")
+        print(f"Merged stage information")
 else:
     df['stage'] = 'Unknown'
 
@@ -47,19 +47,19 @@ else:
 print("\n[1] Calculating Risk Stratification Performance...")
 
 if 'risk_group' in df.columns and 'risk_score' in df.columns:
-    # Binary label encoding: High Risk = 1, Others = 0
+    # Binary label encoding for risk stratification: High Risk = 1, Others = 0
     df['is_high_risk'] = (df['risk_group'] == 'High Risk (Accelerated Agers)').astype(int)
 
     if df['is_high_risk'].sum() > 0:
-        # Area under ROC curve calculation
+        # Area under ROC curve computation
         try:
             auc_roc = roc_auc_score(df['is_high_risk'], df['risk_score'])
-            print(f"   AUC-ROC for High Risk prediction: {auc_roc:.3f}")
+            print(" AUC-ROC for High Risk prediction: {auc_roc:.3f}")
 
-            # ROC curve computation
+            # ROC curve calculation
             fpr, tpr, thresholds = roc_curve(df['is_high_risk'], df['risk_score'])
 
-            # ROC curve visualization
+            # ROC curve figure generation
             plt.figure(figsize=(8, 6))
             plt.plot(fpr, tpr, linewidth=2, label=f'ROC curve (AUC = {auc_roc:.3f})')
             plt.plot([0, 1], [0, 1], 'k--', label='Random classifier')
@@ -72,12 +72,12 @@ if 'risk_group' in df.columns and 'risk_score' in df.columns:
             plt.tight_layout()
             plt.savefig('../visualizations/metrics_roc_curve.png', dpi=300, bbox_inches='tight')
             plt.close()
-            print(f"   Saved: ../visualizations/metrics_roc_curve.png")
+            print(" Saved: ../visualizations/metrics_roc_curve.png")
 
-            # Precision-recall curve computation
+            # Precision-recall curve calculation
             precision, recall, pr_thresholds = precision_recall_curve(df['is_high_risk'], df['risk_score'])
             pr_auc = auc(recall, precision)
-            print(f"   Precision-Recall AUC: {pr_auc:.3f}")
+            print(" Precision-Recall AUC: {pr_auc:.3f}")
 
             plt.figure(figsize=(8, 6))
             plt.plot(recall, precision, linewidth=2, label=f'PR curve (AUC = {pr_auc:.3f})')
@@ -90,14 +90,14 @@ if 'risk_group' in df.columns and 'risk_score' in df.columns:
             plt.tight_layout()
             plt.savefig('../visualizations/metrics_pr_curve.png', dpi=300, bbox_inches='tight')
             plt.close()
-            print(f"   Saved: metrics_pr_curve.png")
+            print(" Saved: metrics_pr_curve.png")
 
         except Exception as e:
-            print(f"   Could not calculate AUC-ROC: {e}")
+            print(" Could not calculate AUC-ROC: {e}")
     else:
-        print("   No high-risk samples found for AUC calculation")
+        print(" No high-risk samples found for AUC calculation")
 else:
-    print("   Risk group data not available")
+    print(" Risk group data not available")
 
 # METRIC 2: Clinical Health Score Discriminative Ability
 
@@ -115,7 +115,7 @@ if 'health_score' not in df.columns and 'oocyte_health_score' not in df.columns:
             unc_norm = np.ones(len(df)) * 0.5
         df['health_score'] = (0.4 * risk_norm + 0.4 * stage_score + 0.2 * unc_norm) * 100
     else:
-        print("   Cannot compute health score proxy")
+        print(" Cannot compute health score proxy")
         df['health_score'] = np.nan
 
 if 'health_score' in df.columns and 'stage' in df.columns:
@@ -127,26 +127,26 @@ if 'health_score' in df.columns and 'stage' in df.columns:
 
         try:
             chs_auc = roc_auc_score(gv_mi_df['is_GV'], gv_mi_df['health_score'])
-            print(f"   CHS AUC for GV vs MI classification: {chs_auc:.3f}")
+            print(" CHS AUC for GV vs MI classification: {chs_auc:.3f}")
 
-            # Statistical hypothesis testing
+            # Non-parametric statistical testing
             gv_scores = gv_mi_df[gv_mi_df['stage'] == 'GV']['health_score'].values
             mi_scores = gv_mi_df[gv_mi_df['stage'] == 'MI']['health_score'].values
 
             from scipy.stats import mannwhitneyu
             stat, pval = mannwhitneyu(gv_scores, mi_scores, alternative='two-sided')
-            print(f"   Mann-Whitney U test: U = {stat:.1f}, p = {pval:.4f}")
+            print(" Mann-Whitney U test: U = {stat:.1f}, p = {pval:.4f}")
 
-            # Effect size calculation (Cohen's d)
+            # Effect size estimation (Cohen's d)
             mean_diff = gv_scores.mean() - mi_scores.mean()
             pooled_std = np.sqrt((gv_scores.std()**2 + mi_scores.std()**2) / 2)
             cohens_d = mean_diff / pooled_std if pooled_std > 0 else 0
-            print(f"   Cohen's d effect size: {cohens_d:.3f}")
+            print(" Cohen's d effect size: {cohens_d:.3f}")
 
         except Exception as e:
-            print(f"   Could not calculate CHS discriminative ability: {e}")
+            print(" Could not calculate CHS discriminative ability: {e}")
     else:
-        print("   Insufficient GV/MI samples for classification")
+        print(" Insufficient GV/MI samples for classification")
 
 # METRIC 3: Latent Space Quality
 
@@ -171,24 +171,24 @@ if 'cellular_age_z' in df.columns and 'stage' in df.columns:
             try:
                 # Silhouette score
                 silhouette = silhouette_score(X_valid, labels_valid)
-                print(f"   Silhouette score (GV vs MI separation): {silhouette:.3f}")
+                print(" Silhouette score (GV vs MI separation): {silhouette:.3f}")
 
                 # Davies-Bouldin index
                 db_index = davies_bouldin_score(X_valid, labels_valid)
-                print(f"   Davies-Bouldin index: {db_index:.3f} (lower is better)")
+                print(" Davies-Bouldin index: {db_index:.3f} (lower is better)")
 
                 # Calinski-Harabasz score
                 ch_score = calinski_harabasz_score(X_valid, labels_valid)
-                print(f"   Calinski-Harabasz score: {ch_score:.3f} (higher is better)")
+                print(" Calinski-Harabasz score: {ch_score:.3f} (higher is better)")
 
             except Exception as e:
-                print(f"   Could not calculate clustering metrics: {e}")
+                print(" Could not calculate clustering metrics: {e}")
         else:
-            print("   Insufficient valid labels")
+            print(" Insufficient valid labels")
     else:
-        print("   Insufficient stage data")
+        print(" Insufficient stage data")
 else:
-    print("   Missing cellular_age_z or stage data")
+    print(" Missing cellular_age_z or stage data")
 
 # METRIC 4: Correlation Analysis
 
@@ -201,7 +201,7 @@ if 'cellular_age_z' in df.columns:
         if age_mask.sum() >= 3:
             corr_age, pval_age = pearsonr(df.loc[age_mask, 'age'],
                                          df.loc[age_mask, 'cellular_age_z'])
-            print(f"   Correlation (Z vs Age): r = {corr_age:.3f}, p = {pval_age:.4f}")
+            print(" Correlation (Z vs Age): r = {corr_age:.3f}, p = {pval_age:.4f}")
 
     # Correlation with health score
     if 'health_score' in df.columns:
@@ -209,7 +209,7 @@ if 'cellular_age_z' in df.columns:
         if hs_mask.sum() >= 3:
             corr_hs, pval_hs = pearsonr(df.loc[hs_mask, 'cellular_age_z'],
                                        df.loc[hs_mask, 'health_score'])
-            print(f"   Correlation (Z vs Health Score): r = {corr_hs:.3f}, p = {pval_hs:.4f}")
+            print(" Correlation (Z vs Health Score): r = {corr_hs:.3f}, p = {pval_hs:.4f}")
 
 # METRIC 5: Age Discrepancy Analysis
 
@@ -225,14 +225,14 @@ if 'cellular_age_z' in df.columns and 'age' in df.columns:
 
         # Age discrepancy: |Z_cellular - age_chronological| / age_chronological
         age_discrepancy = np.abs(z_norm - age_norm) / (age_norm + 1e-8)
-        print(f"   Mean age discrepancy: {age_discrepancy.mean():.3f}")
-        print(f"   Median age discrepancy: {age_discrepancy.median():.3f}")
+        print(" Mean age discrepancy: {age_discrepancy.mean():.3f}")
+        print(" Median age discrepancy: {age_discrepancy.median():.3f}")
 
         # Proportion of accelerated agers (Z >> chronological age)
         accelerated_threshold = 0.2  # 20% higher
         accelerated_mask = z_norm > (age_norm + accelerated_threshold)
         accelerated_pct = accelerated_mask.sum() / len(age_mask) * 100
-        print(f"   Proportion of accelerated agers (Z > age + 0.2): {accelerated_pct:.1f}%")
+        print(" Proportion of accelerated agers (Z > age + 0.2): {accelerated_pct:.1f}%")
 
 # METRIC 6: Uncertainty Statistics
 
@@ -241,16 +241,16 @@ print("\n[6] Calculating Uncertainty Statistics...")
 if 'cellular_age_uncertainty' in df.columns:
     uncertainty = df['cellular_age_uncertainty'].dropna()
     if len(uncertainty) > 0:
-        print(f"   Mean uncertainty: {uncertainty.mean():.2f} ± {uncertainty.std():.2f}")
-        print(f"   Uncertainty range: [{uncertainty.min():.2f}, {uncertainty.max():.2f}]")
-        print(f"   Coefficient of variation: {uncertainty.std() / uncertainty.mean():.3f}")
+        print(" Mean uncertainty: {uncertainty.mean():.2f} ± {uncertainty.std():.2f}")
+        print(" Uncertainty range: [{uncertainty.min():.2f}, {uncertainty.max():.2f}]")
+        print(" Coefficient of variation: {uncertainty.std() / uncertainty.mean():.3f}")
 
         # Uncertainty by stage
         if 'stage' in df.columns:
             for stage in df['stage'].unique():
                 stage_unc = df[df['stage'] == stage]['cellular_age_uncertainty'].dropna()
                 if len(stage_unc) > 0:
-                    print(f"    {stage}: {stage_unc.mean():.2f} ± {stage_unc.std():.2f}")
+                    print("{stage}: {stage_unc.mean():.2f} ± {stage_unc.std():.2f}")
 
 # Generate Summary Report
 
@@ -288,12 +288,12 @@ metrics_summary = {
 for category, metrics in metrics_summary.items():
     print(f"\n{category}:")
     for metric, value in metrics.items():
-        print(f"  {metric}: {value}")
+        print("{metric}: {value}")
 
 print("")
 print(" Metrics calculation complete!")
 print("")
 print("\nGenerated files:")
-print("   ../visualizations/metrics_roc_curve.png - ROC curve for risk stratification")
-print("   ../visualizations/metrics_pr_curve.png - Precision-Recall curve")
+print(" ../visualizations/metrics_roc_curve.png - ROC curve for risk stratification")
+print(" ../visualizations/metrics_pr_curve.png - Precision-Recall curve")
 

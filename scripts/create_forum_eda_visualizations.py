@@ -23,7 +23,7 @@ sample_csv = '../data/sample_metadata_with_age.csv'
 clinical_csv = '../data/clinical_decision_framework_final.csv'
 
 if not os.path.exists(sample_csv) or not os.path.exists(clinical_csv):
-    print(" Error: Required CSV files not found")
+    print("Error: Required CSV files not found")
     exit(1)
 
 sample_df = pd.read_csv(sample_csv)
@@ -31,7 +31,7 @@ clinical_df = pd.read_csv(clinical_csv, index_col=0)
 
 # Merge data
 merged = clinical_df.merge(sample_df, left_index=True, right_on='sample', how='inner')
-print(f" Loaded data: {len(merged)} samples")
+print(f"Loaded data: {len(merged)} samples")
 
 # Check if health score exists, compute if needed
 health_col = 'oocyte_health_score' if 'oocyte_health_score' in merged.columns else 'health_score'
@@ -45,7 +45,7 @@ if health_col not in merged.columns or merged[health_col].isna().all():
 
 # Filter to GV and MI only for cleaner visualization
 df_plot = merged[merged['stage'].isin(['GV', 'MI'])].copy()
-print(f"  Filtered to GV/MI: {len(df_plot)} samples (GV: {len(df_plot[df_plot['stage']=='GV'])}, MI: {len(df_plot[df_plot['stage']=='MI'])})")
+print("Filtered to GV/MI: {len(df_plot)} samples (GV: {len(df_plot[df_plot['stage']=='GV'])}, MI: {len(df_plot[df_plot['stage']=='MI'])})")
 
 # VISUALIZATION 1: UMAP/PCA Colored by Stage
 
@@ -84,9 +84,9 @@ if len(pca_features) >= 2:
     pca_coords = pca.fit_transform(X_scaled)
 
     print(f" Computed PCA from {len(feature_names)} features: {feature_names}")
-    print(f"  PC1 variance explained: {pca.explained_variance_ratio_[0]:.2%}")
-    print(f"  PC2 variance explained: {pca.explained_variance_ratio_[1]:.2%}")
-    print(f"  Total variance explained: {pca.explained_variance_ratio_.sum():.2%}")
+    print("PC1 variance explained: {pca.explained_variance_ratio_[0]:.2%}")
+    print("PC2 variance explained: {pca.explained_variance_ratio_[1]:.2%}")
+    print("Total variance explained: {pca.explained_variance_ratio_.sum():.2%}")
 
     # Create plot
     fig, ax = plt.subplots(1, 1, figsize=(9, 7))
@@ -136,7 +136,7 @@ else:
 print("\n[2/2] Creating health score box/violin plot by stage...")
 
 if health_col not in df_plot.columns or df_plot[health_col].isna().all():
-    print(" Error: Health score not available")
+    print("Error: Health score not available")
     exit(1)
 
 # Prepare data
@@ -144,16 +144,16 @@ gv_scores = df_plot[df_plot['stage'] == 'GV'][health_col].dropna()
 mi_scores = df_plot[df_plot['stage'] == 'MI'][health_col].dropna()
 
 if len(gv_scores) == 0 or len(mi_scores) == 0:
-    print(" Error: Insufficient data for comparison")
+    print("Error: Insufficient data for comparison")
     exit(1)
 
-# Statistical hypothesis testing
+# Non-parametric statistical testing
 stat, pval = stats.mannwhitneyu(gv_scores, mi_scores, alternative='two-sided')
-print(f"  Statistical test (Mann-Whitney U):")
-print(f"    U-statistic: {stat:.2f}")
-print(f"    p-value: {pval:.4f}")
+print("Statistical test (Mann-Whitney U):")
+print("U-statistic: {stat:.2f}")
+print("p-value: {pval:.4f}")
 significance = "***" if pval < 0.001 else "**" if pval < 0.01 else "*" if pval < 0.05 else "ns"
-print(f"    Significance: {significance}")
+print("Significance: {significance}")
 
 # Create figure with both boxplot and violin plot side by side
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
@@ -302,16 +302,16 @@ print(" Saved: forum_health_score_by_stage.png")
 
 # Summary statistics
 print(f"\nSummary statistics:")
-print(f"  GV: n={len(gv_scores)}, Mean={np.mean(gv_scores):.2f}, Median={np.median(gv_scores):.2f}, SD={np.std(gv_scores):.2f}")
-print(f"  MI: n={len(mi_scores)}, Mean={np.mean(mi_scores):.2f}, Median={np.median(mi_scores):.2f}, SD={np.std(mi_scores):.2f}")
+print("GV: n={len(gv_scores)}, Mean={np.mean(gv_scores):.2f}, Median={np.median(gv_scores):.2f}, SD={np.std(gv_scores):.2f}")
+print("MI: n={len(mi_scores)}, Mean={np.mean(mi_scores):.2f}, Median={np.median(mi_scores):.2f}, SD={np.std(mi_scores):.2f}")
 
 print("")
 print(" Forum EDA Visualizations Created!")
 print("")
 print("\nGenerated files:")
-print("   forum_umap_pca_by_stage.png")
-print("   forum_health_score_by_stage.png")
+print(" forum_umap_pca_by_stage.png")
+print(" forum_health_score_by_stage.png")
 print("\nThese visualizations show:")
-print("  1. Global structure: GV and MI separate along main axis")
-print("  2. GV oocytes look healthier than MI at transcriptomic level")
+print("1. Global structure: GV and MI separate along main axis")
+print("2. GV oocytes look healthier than MI at transcriptomic level")
 

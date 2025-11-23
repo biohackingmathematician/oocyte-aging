@@ -25,7 +25,7 @@ sample_csv = '../data/sample_metadata_with_age.csv'
 clinical_csv = '../data/clinical_decision_framework_final.csv'
 
 if not os.path.exists(sample_csv) or not os.path.exists(clinical_csv):
-    print(" Error: Required CSV files not found")
+    print("Error: Required CSV files not found")
     exit(1)
 
 sample_df = pd.read_csv(sample_csv)
@@ -34,8 +34,8 @@ clinical_df = pd.read_csv(clinical_csv, index_col=0)
 # Merge data
 merged = clinical_df.merge(sample_df, left_index=True, right_on='sample', how='inner')
 
-print(f" Loaded data: {len(merged)} samples")
-print(f"  Columns: {list(merged.columns)}")
+print(f"Loaded data: {len(merged)} samples")
+print("Columns: {list(merged.columns)}")
 
 # Extract age column
 age_col = 'age_x' if 'age_x' in merged.columns else ('age_y' if 'age_y' in merged.columns else 'age')
@@ -382,7 +382,7 @@ print(" Complete Results Summary Generated!")
 print("")
 print("\nAll panels populated with available data.")
 print("Key findings from mid-progress report:")
-print("  • DPT correlation: ρ = -0.79, p < 0.001")
-print("  • Health scores: GV = 76.7, MI = 61.0")
-print("  • Intervention thresholds: Optimal >79.9, Critical <53.2")
+print("• DPT correlation: ρ = -0.79, p < 0.001")
+print("• Health scores: GV = 76.7, MI = 61.0")
+print("• Intervention thresholds: Optimal >79.9, Critical <53.2")
 

@@ -20,23 +20,23 @@ sample_csv = '../data/sample_metadata_with_age.csv'
 clinical_csv = '../data/clinical_decision_framework_final.csv'
 
 if not os.path.exists(sample_csv):
-    print(f" Error: {sample_csv} not found")
+    print("Error: {sample_csv} not found")
     exit(1)
 
 if not os.path.exists(clinical_csv):
-    print(f" Error: {clinical_csv} not found")
+    print("Error: {clinical_csv} not found")
     exit(1)
 
 # Load data
 sample_df = pd.read_csv(sample_csv)
 clinical_df = pd.read_csv(clinical_csv, index_col=0)
 
-print(f" Loaded sample metadata: {len(sample_df)} samples")
-print(f" Loaded clinical data: {len(clinical_df)} samples")
+print(f"Loaded sample metadata: {len(sample_df)} samples")
+print(f"Loaded clinical data: {len(clinical_df)} samples")
 
 # Merge data
 merged = clinical_df.merge(sample_df, left_index=True, right_on='sample', how='inner')
-print(f" Merged data: {len(merged)} samples")
+print(f"Merged data: {len(merged)} samples")
 
 # Check what we have
 print(f"\nAvailable columns: {list(merged.columns)}")
@@ -149,8 +149,8 @@ for col, name in metrics_to_try:
 
 if available_metric is None:
     print(" No health score or comparable metric found")
-    print(f"  Available numeric columns: {merged.select_dtypes(include=[np.number]).columns.tolist()}")
-    print("  Creating age-based comparison instead...")
+    print("Available numeric columns: {merged.select_dtypes(include=[np.number]).columns.tolist()}")
+    print("Creating age-based comparison instead...")
 
     # Use age as fallback
     available_metric = 'age'
@@ -179,19 +179,19 @@ if len(mi_values) > 0:
     labels.append(f'MI\n(n={len(mi_values)})')
 
 if len(values_by_stage) == 0:
-    print(" Error: No data available for boxplot")
+    print("Error: No data available for boxplot")
     exit(1)
 
-# Statistical hypothesis testing
+# Non-parametric statistical testing
 if len(values_by_stage) == 2:
     stat, pval = stats.mannwhitneyu(values_by_stage[0],
                                      values_by_stage[1],
                                      alternative='two-sided')
     print(f"\nStatistical test (Mann-Whitney U):")
-    print(f"  U-statistic: {stat:.2f}")
-    print(f"  p-value: {pval:.4f}")
+    print("U-statistic: {stat:.2f}")
+    print("p-value: {pval:.4f}")
     significance = "***" if pval < 0.001 else "**" if pval < 0.01 else "*" if pval < 0.05 else "ns"
-    print(f"  Significance: {significance}")
+    print("Significance: {significance}")
 else:
     pval = 1.0
     significance = "ns"
@@ -269,19 +269,19 @@ print(f"\nSummary statistics for {metric_name}:")
 for i, (vals, label) in enumerate(zip(values_by_stage, labels)):
     stage_name = label.split('\n')[0]
     print(f"\n{stage_name}:")
-    print(f"  n = {len(vals)}")
-    print(f"  Mean = {np.mean(vals):.2f}")
-    print(f"  Median = {np.median(vals):.2f}")
-    print(f"  SD = {np.std(vals):.2f}")
-    print(f"  Range = [{np.min(vals):.2f}, {np.max(vals):.2f}]")
+    print("n = {len(vals)}")
+    print("Mean = {np.mean(vals):.2f}")
+    print("Median = {np.median(vals):.2f}")
+    print("SD = {np.std(vals):.2f}")
+    print("Range = [{np.min(vals):.2f}, {np.max(vals):.2f}]")
 
 print("")
 print(" Visualizations generated from CSV data!")
 print("")
 print("\nGenerated files:")
 if os.path.exists('forum_stage_overview.png'):
-    print("   forum_stage_overview.png")
+    print(" forum_stage_overview.png")
 if os.path.exists(output_file):
-    print(f"   {output_file}")
+    print(" {output_file}")
 print("\nNote: UMAP plot requires h5ad files. Run notebook cells first to generate them.")
 
