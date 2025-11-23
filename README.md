@@ -26,6 +26,7 @@ This uses a multi-dimensional Bayesian generative model to quantify variability 
 ├── ADSPROJECT_base.ipynb     # Base notebook (reference)
 ├── README.md                  # This file
 ├── RESULTS.md                 # Detailed results summary
+├── METRICS.md                 # Validation metrics and performance evaluation
 ├── LICENSE                    # MIT License
 │
 ├── docs/                      # Documentation
