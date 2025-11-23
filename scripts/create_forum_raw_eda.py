@@ -12,23 +12,21 @@ import os
 import glob
 from pathlib import Path
 
-print("="*70)
+print("")
 print("FORUM EDA: Raw Data Overview")
-print("="*70)
+print("")
 
-# ============================================================================
 # Load Metadata
-# ============================================================================
 
 sample_csv = '../data/sample_metadata_with_age.csv'
 clinical_csv = '../data/clinical_decision_framework_final.csv'
 
 if not os.path.exists(sample_csv):
-    print("❌ ERROR: sample_metadata_with_age.csv not found")
+    print(" Error: sample_metadata_with_age.csv not found")
     exit(1)
 
 metadata = pd.read_csv(sample_csv)
-print(f"✓ Loaded metadata: {len(metadata)} samples")
+print(f" Loaded metadata: {len(metadata)} samples")
 
 # Merge with clinical data if available for age
 if os.path.exists(clinical_csv):
@@ -57,9 +55,7 @@ def assign_age_group(age):
 
 merged['age_group'] = merged['age_parsed'].apply(assign_age_group)
 
-# ============================================================================
 # FIGURE 1: Sample Composition (Raw Labels)
-# ============================================================================
 
 print("\n[1/2] Creating sample composition plot (raw labels)...")
 
@@ -160,7 +156,7 @@ plt.tight_layout(rect=[0, 0, 1, 0.96])
 plt.savefig('../visualizations/forum_raw_sample_composition.png', dpi=300, bbox_inches='tight',
             facecolor='white', edgecolor='none')
 plt.close()
-print("✓ Saved: forum_raw_sample_composition.png")
+print(" Saved: forum_raw_sample_composition.png")
 
 # Print summary
 if 'stage' in merged.columns:
@@ -176,9 +172,7 @@ if 'age_group' in merged.columns:
         pct = count / len(merged) * 100
         print(f"    {group}: {count} cells ({pct:.0f}%)")
 
-# ============================================================================
 # FIGURE 2: Expression Matrix Snapshot (Heatmap)
-# ============================================================================
 
 print("\n[2/2] Creating expression matrix snapshot heatmap...")
 
@@ -221,7 +215,7 @@ if os.path.exists(zenodo_dir):
         # Convert to numpy array
         expression_data = np.array(tpm_matrix).T  # Transpose: genes x cells
         
-        print(f"  ✓ Loaded expression matrix: {expression_data.shape[0]} genes × {expression_data.shape[1]} cells")
+        print(f"   Loaded expression matrix: {expression_data.shape[0]} genes × {expression_data.shape[1]} cells")
         
         # Select top variable genes
         # Calculate variance for each gene
@@ -233,7 +227,7 @@ if os.path.exists(zenodo_dir):
         top_var_data = expression_data[top_var_indices, :]
         top_var_gene_names = gene_names[top_var_indices]
         
-        print(f"  ✓ Selected top {top_n_genes} variable genes")
+        print(f"   Selected top {top_n_genes} variable genes")
         
         # Log transform
         top_var_data_log = np.log1p(top_var_data)
@@ -318,13 +312,13 @@ if os.path.exists(zenodo_dir):
         plt.savefig('../visualizations/forum_raw_expression_heatmap.png', dpi=300, bbox_inches='tight',
                    facecolor='white', edgecolor='none')
         plt.close()
-        print("✓ Saved: forum_raw_expression_heatmap.png")
+        print(" Saved: forum_raw_expression_heatmap.png")
         
     else:
-        print("  ⚠ No abundance.tsv files found - creating placeholder")
+        print("   No abundance.tsv files found - creating placeholder")
         create_placeholder_heatmap()
 else:
-    print("  ⚠ Zenodo data directory not found - creating placeholder")
+    print("   Zenodo data directory not found - creating placeholder")
     create_placeholder_heatmap()
 
 def create_placeholder_heatmap():
@@ -363,14 +357,14 @@ def create_placeholder_heatmap():
     plt.savefig('../visualizations/forum_raw_expression_heatmap.png', dpi=300, bbox_inches='tight',
                facecolor='white', edgecolor='none')
     plt.close()
-    print("✓ Saved: forum_raw_expression_heatmap.png (placeholder)")
+    print(" Saved: forum_raw_expression_heatmap.png (placeholder)")
 
 print("\n" + "="*70)
-print("✓ Forum Raw EDA Visualizations Complete!")
-print("="*70)
+print(" Forum Raw EDA Visualizations Complete!")
+print("")
 print("\nGenerated files:")
-print("  ✓ forum_raw_sample_composition.png - Sample composition (stage + age)")
-print("  ✓ forum_raw_expression_heatmap.png - Expression matrix snapshot")
+print("   forum_raw_sample_composition.png - Sample composition (stage + age)")
+print("   forum_raw_expression_heatmap.png - Expression matrix snapshot")
 print("\nThese visualizations show:")
 print("  1. Raw labels: 20 oocytes, 6 GV + 14 MI, age distribution")
 print("  2. Expression matrix: Top variable genes across cells, ordered by stage")

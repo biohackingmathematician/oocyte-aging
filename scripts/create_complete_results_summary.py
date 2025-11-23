@@ -16,16 +16,16 @@ from matplotlib.gridspec import GridSpec
 from scipy import stats
 import os
 
-print("="*70)
+print("")
 print("COMPLETE RESULTS SUMMARY - OOCYTE AGING ANALYSIS")
-print("="*70)
+print("")
 
 # Load data
 sample_csv = '../data/sample_metadata_with_age.csv'
 clinical_csv = '../data/clinical_decision_framework_final.csv'
 
 if not os.path.exists(sample_csv) or not os.path.exists(clinical_csv):
-    print("❌ ERROR: Required CSV files not found")
+    print(" Error: Required CSV files not found")
     exit(1)
 
 sample_df = pd.read_csv(sample_csv)
@@ -34,7 +34,7 @@ clinical_df = pd.read_csv(clinical_csv, index_col=0)
 # Merge data
 merged = clinical_df.merge(sample_df, left_index=True, right_on='sample', how='inner')
 
-print(f"✓ Loaded data: {len(merged)} samples")
+print(f" Loaded data: {len(merged)} samples")
 print(f"  Columns: {list(merged.columns)}")
 
 # Extract age column
@@ -42,12 +42,12 @@ age_col = 'age_x' if 'age_x' in merged.columns else ('age_y' if 'age_y' in merge
 
 # Compute health score if not available
 if 'oocyte_health_score' not in merged.columns and 'health_score' not in merged.columns:
-    print("⚠ Computing health score from cellular_age_z (proxy)...")
+    print(" Computing health score from cellular_age_z (proxy)...")
     # Use inverse of cellular_age_z as proxy (lower cellular age = higher health)
     if 'cellular_age_z' in merged.columns:
         merged['health_score'] = (1 - merged['cellular_age_z']) * 100
         merged['oocyte_health_score'] = merged['health_score']
-        print("✓ Computed health score from cellular_age_z")
+        print(" Computed health score from cellular_age_z")
 
 # Create comprehensive summary figure
 print("\nCreating complete results summary figure...")
@@ -62,9 +62,7 @@ colors_risk = {
     'High Risk (Accelerated Agers)': '#e74c3c'
 }
 
-# ============================================================================
 # ROW 1: Basic Distributions
-# ============================================================================
 
 # Panel A: Stage distribution
 ax_a = fig.add_subplot(gs[0, 0])
@@ -166,9 +164,7 @@ else:
     ax_d.set_title('D. Age Distribution', fontsize=12, fontweight='bold', pad=10)
     ax_d.axis('off')
 
-# ============================================================================
 # ROW 2: Trajectory and Correlations
-# ============================================================================
 
 # Panel E: Health score by stage (from mid-progress report: GV=76.7, MI=61.0)
 ax_e = fig.add_subplot(gs[1, 0])
@@ -282,9 +278,7 @@ else:
     ax_g.set_title('G. Uncertainty by Stage', fontsize=12, fontweight='bold', pad=10)
     ax_g.axis('off')
 
-# ============================================================================
 # ROW 3: Clinical Insights and Summary
-# ============================================================================
 
 # Panel H: Risk groups by stage
 ax_h = fig.add_subplot(gs[2, 0:2])
@@ -382,10 +376,10 @@ plt.savefig('../visualizations/complete_results_summary.png', dpi=300, bbox_inch
             facecolor='white', edgecolor='none', pad_inches=0.2)
 plt.close()
 
-print("✓ Saved: complete_results_summary.png")
+print(" Saved: complete_results_summary.png")
 print("\n" + "="*70)
-print("✓ Complete Results Summary Generated!")
-print("="*70)
+print(" Complete Results Summary Generated!")
+print("")
 print("\nAll panels populated with available data.")
 print("Key findings from mid-progress report:")
 print("  • DPT correlation: ρ = -0.79, p < 0.001")

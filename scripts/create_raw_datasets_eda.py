@@ -12,21 +12,19 @@ import os
 import json
 import gzip
 
-print("="*70)
+print("")
 print("RAW DATASETS EDA: GEO and Zenodo")
-print("="*70)
+print("")
 
-# ============================================================================
 # Load Data
-# ============================================================================
 
 # Load sample metadata
 sample_csv = '../data/sample_metadata_with_age.csv'
 if os.path.exists(sample_csv):
     metadata = pd.read_csv(sample_csv)
-    print(f"✓ Loaded metadata: {len(metadata)} samples")
+    print(f" Loaded metadata: {len(metadata)} samples")
 else:
-    print("❌ ERROR: sample_metadata_with_age.csv not found")
+    print(" Error: sample_metadata_with_age.csv not found")
     exit(1)
 
 # Load clinical data for age information
@@ -45,9 +43,7 @@ if age_col and age_col in merged.columns:
 else:
     merged['age_parsed'] = np.nan
 
-# ============================================================================
 # Parse GEO Dataset Information
-# ============================================================================
 
 print("\nParsing GEO dataset information...")
 
@@ -66,21 +62,19 @@ if os.path.exists(geo_dir):
     # For detailed parsing, would need GEOparse library
     print(f"  GEO data directory found: {geo_dir}")
     if os.path.exists(gse155179_file):
-        print(f"  ✓ GSE155179 found")
+        print(f"   GSE155179 found")
         # From EXECUTION_RESULTS_SUMMARY: 12 samples with age data (30-40 years)
         geo_info['GSE155179']['samples'] = 12
         geo_info['GSE155179']['ages'] = list(range(30, 41))  # Estimated range
     if os.path.exists(gse95477_file):
-        print(f"  ✓ GSE95477 found")
+        print(f"   GSE95477 found")
         # From EXECUTION_RESULTS_SUMMARY: 32 samples with age data
         geo_info['GSE95477']['samples'] = 32
         geo_info['GSE95477']['ages'] = list(range(25, 36))  # Estimated range
 else:
-    print(f"  ⚠ GEO data directory not found (expected if not downloaded)")
+    print(f"   GEO data directory not found (expected if not downloaded)")
 
-# ============================================================================
 # Parse Zenodo Dataset Information
-# ============================================================================
 
 print("\nParsing Zenodo dataset information...")
 
@@ -93,7 +87,7 @@ if os.path.exists(zenodo_dir):
                      if os.path.isdir(os.path.join(zenodo_dir, d))]
     zenodo_samples = [d for d in kallisto_dirs]
     
-    print(f"  ✓ Found {len(zenodo_samples)} Zenodo samples")
+    print(f"   Found {len(zenodo_samples)} Zenodo samples")
     
     # Try to extract sequencing info from run_info.json files
     zenodo_info = {'total_reads': [], 'pseudoaligned_reads': []}
@@ -114,11 +108,9 @@ if os.path.exists(zenodo_dir):
     if zenodo_info['total_reads']:
         print(f"  Sample sequencing depth: {np.mean(zenodo_info['total_reads'])/1e6:.1f}M reads (mean)")
 else:
-    print(f"  ⚠ Zenodo data directory not found")
+    print(f"   Zenodo data directory not found")
 
-# ============================================================================
 # Create EDA Figure
-# ============================================================================
 
 print("\nCreating raw datasets EDA figure...")
 
@@ -129,9 +121,7 @@ gs = GridSpec(2, 3, figure=fig, hspace=0.35, wspace=0.4,
 colors_stage = {'GV': '#2ecc71', 'MI': '#e74c3c', 'MII': '#3498db'}
 colors_dataset = {'Zenodo': '#3498db', 'GSE155179': '#e74c3c', 'GSE95477': '#f39c12'}
 
-# ============================================================================
 # Panel 1: Dataset Sources Overview
-# ============================================================================
 
 ax1 = fig.add_subplot(gs[0, 0])
 
@@ -160,9 +150,7 @@ for bar in bars1:
              f'{int(height)}', ha='center', va='bottom', 
              fontweight='bold', fontsize=11)
 
-# ============================================================================
 # Panel 2: Stage Distribution (Zenodo Data)
-# ============================================================================
 
 ax2 = fig.add_subplot(gs[0, 1])
 
@@ -192,9 +180,7 @@ else:
     ax2.set_title('B. Stage Distribution', fontsize=13, fontweight='bold', pad=12)
     ax2.axis('off')
 
-# ============================================================================
 # Panel 3: Age Distribution from GEO Datasets
-# ============================================================================
 
 ax3 = fig.add_subplot(gs[0, 2])
 
@@ -255,9 +241,7 @@ else:
         ax3.set_title('C. Age Distribution', fontsize=13, fontweight='bold', pad=12)
         ax3.axis('off')
 
-# ============================================================================
 # Panel 4: Dataset Comparison - Samples by Stage
-# ============================================================================
 
 ax4 = fig.add_subplot(gs[1, 0:2])
 
@@ -305,9 +289,7 @@ else:
     ax4.set_title('D. Sample Distribution by Stage', fontsize=13, fontweight='bold', pad=12)
     ax4.axis('off')
 
-# ============================================================================
 # Panel 5: Dataset Summary Statistics
-# ============================================================================
 
 ax5 = fig.add_subplot(gs[1, 2])
 ax5.axis('off')
@@ -350,9 +332,7 @@ ax5.text(0.05, 0.95, summary_text_str, ha='left', va='top', transform=ax5.transA
         fontsize=11, family='monospace',
         bbox=dict(boxstyle='round', facecolor='lightgray', alpha=0.3, pad=10))
 
-# ============================================================================
 # Finalize Figure
-# ============================================================================
 
 fig.suptitle('Raw Datasets EDA: GEO and Zenodo Sources', 
              fontsize=16, fontweight='bold', y=0.98)
@@ -361,11 +341,11 @@ plt.savefig('../visualizations/raw_datasets_eda.png', dpi=300, bbox_inches='tigh
             facecolor='white', edgecolor='none', pad_inches=0.2)
 plt.close()
 
-print("✓ Saved: raw_datasets_eda.png")
+print(" Saved: raw_datasets_eda.png")
 
 print("\n" + "="*70)
-print("✓ Raw Datasets EDA Complete!")
-print("="*70)
+print(" Raw Datasets EDA Complete!")
+print("")
 print("\nSummary:")
 print(f"  • Zenodo samples: {len(zenodo_samples) if zenodo_samples else 20}")
 print(f"  • GEO GSE155179: {geo_info['GSE155179']['samples']} samples")

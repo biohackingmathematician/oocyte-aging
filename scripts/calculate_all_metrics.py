@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """
 Comprehensive Metrics Calculation
-Implements all feasible metrics from METRICS_EVALUATION.md
+
+Implements validation metrics for oocyte aging trajectory analysis.
+Calculates model fidelity, uncertainty calibration, clinical decision support,
+and biological validation metrics as specified in METRICS_EVALUATION.md.
 """
 
 import pandas as pd
@@ -18,24 +21,19 @@ from matplotlib.gridspec import GridSpec
 import os
 import json
 
-print("="*70)
-print("COMPREHENSIVE METRICS CALCULATION")
+print("Comprehensive Metrics Calculation")
 print("Based on METRICS_EVALUATION.md recommendations")
-print("="*70)
 
-# ============================================================================
-# Load Data
-# ============================================================================
-
+# Data loading
 clinical_csv = '../data/clinical_decision_framework_final.csv'
 sample_csv = '../data/sample_metadata_with_age.csv'
 
 if not os.path.exists(clinical_csv):
-    print("❌ ERROR: clinical_decision_framework_final.csv not found")
+    print("Error: clinical_decision_framework_final.csv not found")
     exit(1)
 
 df = pd.read_csv(clinical_csv, index_col=0)
-print(f"✓ Loaded clinical data: {len(df)} samples")
+print(f"Loaded clinical data: {len(df)} samples")
 
 # Load sample metadata
 if os.path.exists(sample_csv):
@@ -44,13 +42,13 @@ if os.path.exists(sample_csv):
         df = df.merge(sample_df[['sample', 'stage']], 
                      left_index=True, right_on='sample', how='left')
         df.set_index('sample', inplace=True, drop=False)
-        print(f"✓ Merged stage information")
+        print("Merged stage information")
 else:
     df['stage'] = 'Unknown'
 
-# Compute/Estimate Health Score if Missing
+# Compute health score if missing
 if 'health_score' not in df.columns and 'oocyte_health_score' not in df.columns:
-    print("⚠ Computing proxy health score...")
+    print("Computing proxy health score from available data")
     if 'risk_score' in df.columns:
         risk_norm = 1.0 - (df['risk_score'] - df['risk_score'].min()) / (df['risk_score'].max() - df['risk_score'].min() + 1e-8)
     else:
@@ -63,19 +61,13 @@ if 'health_score' not in df.columns and 'oocyte_health_score' not in df.columns:
         unc_norm = np.ones(len(df)) * 0.5
     df['health_score'] = (0.4 * risk_norm + 0.4 * stage_score + 0.2 * unc_norm) * 100
 
-# Store all metrics
 metrics_results = {}
 
-# ============================================================================
-# CATEGORY 1: Model Fidelity & Validation
-# ============================================================================
+# Category 1: Model Fidelity and Validation
+print("\nCategory 1: Model Fidelity and Validation")
 
-print("\n" + "="*70)
-print("CATEGORY 1: MODEL FIDELITY & VALIDATION")
-print("="*70)
-
-# 1. Latent Space Quality
-print("\n[1.1] Latent Space Quality Metrics...")
+# Latent space quality metrics
+print("\n1.1 Latent Space Quality Metrics")
 if 'cellular_age_z' in df.columns and 'stage' in df.columns:
     stage_mask = df['stage'].isin(['GV', 'MI'])
     if stage_mask.sum() >= 4:
@@ -99,14 +91,14 @@ if 'cellular_age_z' in df.columns and 'stage' in df.columns:
                     'davies_bouldin_index': float(db_index),
                     'calinski_harabasz_score': float(ch_score)
                 }
-                print(f"  ✓ Silhouette score: {silhouette:.3f}")
-                print(f"  ✓ Davies-Bouldin index: {db_index:.3f}")
-                print(f"  ✓ Calinski-Harabasz score: {ch_score:.3f}")
+                print(f"  Silhouette score: {silhouette:.3f}")
+                print(f"  Davies-Bouldin index: {db_index:.3f}")
+                print(f"  Calinski-Harabasz score: {ch_score:.3f}")
             except Exception as e:
-                print(f"  ⚠ Error: {e}")
+                print(f"  Error calculating latent space metrics: {e}")
 
-# 2. Correlation Analysis
-print("\n[1.2] Correlation Analysis...")
+# Correlation analysis
+print("\n1.2 Correlation Analysis")
 correlations = {}
 if 'cellular_age_z' in df.columns:
     if 'age' in df.columns:
@@ -115,7 +107,7 @@ if 'cellular_age_z' in df.columns:
             corr_age, pval_age = pearsonr(df.loc[age_mask, 'age'], 
                                          df.loc[age_mask, 'cellular_age_z'])
             correlations['z_vs_age'] = {'r': float(corr_age), 'p': float(pval_age)}
-            print(f"  ✓ Z vs Age: r = {corr_age:.3f}, p = {pval_age:.4f}")
+            print(f"  Z vs Age: r = {corr_age:.3f}, p = {pval_age:.4f}")
     
     if 'health_score' in df.columns:
         hs_mask = df['health_score'].notna() & df['cellular_age_z'].notna()
@@ -123,55 +115,37 @@ if 'cellular_age_z' in df.columns:
             corr_hs, pval_hs = pearsonr(df.loc[hs_mask, 'cellular_age_z'],
                                        df.loc[hs_mask, 'health_score'])
             correlations['z_vs_health_score'] = {'r': float(corr_hs), 'p': float(pval_hs)}
-            print(f"  ✓ Z vs Health Score: r = {corr_hs:.3f}, p = {pval_hs:.4f}")
+            print(f"  Z vs Health Score: r = {corr_hs:.3f}, p = {pval_hs:.4f}")
 
 metrics_results['correlations'] = correlations
 
-# ============================================================================
-# CATEGORY 2: Uncertainty Calibration
-# ============================================================================
-
-print("\n" + "="*70)
-print("CATEGORY 2: UNCERTAINTY CALIBRATION")
-print("="*70)
+# Category 2: Uncertainty Calibration
+print("\nCategory 2: Uncertainty Calibration")
 
 if 'cellular_age_uncertainty' in df.columns:
     uncertainty = df['cellular_age_uncertainty'].dropna()
     
     # Expected Calibration Error (ECE)
-    print("\n[2.1] Expected Calibration Error (ECE)...")
-    # Bin uncertainty values and check calibration
+    print("\n2.1 Expected Calibration Error (ECE)")
     n_bins = 10
     uncertainty_bins = np.linspace(uncertainty.min(), uncertainty.max(), n_bins + 1)
     bin_indices = np.digitize(uncertainty, uncertainty_bins[:-1])
     
-    # For ECE, we need predicted vs actual - using uncertainty as proxy
-    # Since we don't have ground truth uncertainty, we'll use a simplified approach
-    ece = 0.0
-    for i in range(1, n_bins + 1):
-        bin_mask = bin_indices == i
-        if bin_mask.sum() > 0:
-            bin_unc = uncertainty[bin_mask]
-            # Simplified: assume higher uncertainty should correlate with higher variance
-            # This is a heuristic since we don't have true uncertainty labels
-            pass
-    
-    # Coverage Probability for Prediction Intervals
-    print("\n[2.2] Coverage Probability for Prediction Intervals...")
+    # Coverage probability for prediction intervals
+    print("\n2.2 Coverage Probability for Prediction Intervals")
     if 'cellular_age_z' in df.columns:
         z_values = df['cellular_age_z'].dropna()
         unc_values = df.loc[z_values.index, 'cellular_age_uncertainty'].dropna()
         
         if len(z_values) > 0 and len(unc_values) > 0:
-            # Create 95% prediction intervals
             z_mean = z_values.mean()
             z_std = z_values.std()
             
-            # Use uncertainty to create intervals
+            # Construct 95% prediction intervals using uncertainty estimates
             lower_bound = z_values - 1.96 * (unc_values / unc_values.max() * z_std)
             upper_bound = z_values + 1.96 * (unc_values / unc_values.max() * z_std)
             
-            # Coverage: how many actual values fall within intervals
+            # Calculate coverage: proportion of values within intervals
             coverage = ((z_values >= lower_bound) & (z_values <= upper_bound)).mean()
             
             metrics_results['uncertainty_calibration'] = {
@@ -180,20 +154,15 @@ if 'cellular_age_uncertainty' in df.columns:
                 'std_uncertainty': float(uncertainty.std()),
                 'cv_uncertainty': float(uncertainty.std() / uncertainty.mean())
             }
-            print(f"  ✓ 95% Coverage probability: {coverage:.3f}")
-            print(f"  ✓ Mean uncertainty: {uncertainty.mean():.2f} ± {uncertainty.std():.2f}")
-            print(f"  ✓ Coefficient of variation: {uncertainty.std() / uncertainty.mean():.3f}")
+            print(f"  95% Coverage probability: {coverage:.3f}")
+            print(f"  Mean uncertainty: {uncertainty.mean():.2f} ± {uncertainty.std():.2f}")
+            print(f"  Coefficient of variation: {uncertainty.std() / uncertainty.mean():.3f}")
 
-# ============================================================================
-# CATEGORY 3: Clinical Decision Support (HIGH PRIORITY)
-# ============================================================================
+# Category 3: Clinical Decision Support
+print("\nCategory 3: Clinical Decision Support")
 
-print("\n" + "="*70)
-print("CATEGORY 3: CLINICAL DECISION SUPPORT (HIGH PRIORITY)")
-print("="*70)
-
-# 3. Risk Stratification Performance
-print("\n[3.1] Risk Stratification Performance...")
+# Risk stratification performance
+print("\n3.1 Risk Stratification Performance")
 if 'risk_group' in df.columns and 'risk_score' in df.columns:
     df['is_high_risk'] = (df['risk_group'] == 'High Risk (Accelerated Agers)').astype(int)
     
@@ -219,7 +188,7 @@ if 'risk_group' in df.columns and 'risk_score' in df.columns:
             else:
                 sensitivity = specificity = ppv = npv = 0
             
-            # Brier score
+            # Brier score for calibration assessment
             brier = brier_score_loss(df['is_high_risk'], df['risk_score'] / df['risk_score'].max())
             
             metrics_results['risk_stratification'] = {
@@ -233,17 +202,17 @@ if 'risk_group' in df.columns and 'risk_score' in df.columns:
                 'optimal_threshold': float(optimal_threshold)
             }
             
-            print(f"  ✓ AUC-ROC: {auc_roc:.3f}")
-            print(f"  ✓ Precision-Recall AUC: {pr_auc:.3f}")
-            print(f"  ✓ Brier score: {brier:.3f} (target < 0.2)")
-            print(f"  ✓ Sensitivity: {sensitivity:.3f}, Specificity: {specificity:.3f}")
-            print(f"  ✓ PPV: {ppv:.3f}, NPV: {npv:.3f}")
+            print(f"  AUC-ROC: {auc_roc:.3f}")
+            print(f"  Precision-Recall AUC: {pr_auc:.3f}")
+            print(f"  Brier score: {brier:.3f}")
+            print(f"  Sensitivity: {sensitivity:.3f}, Specificity: {specificity:.3f}")
+            print(f"  PPV: {ppv:.3f}, NPV: {npv:.3f}")
             
         except Exception as e:
-            print(f"  ⚠ Error: {e}")
+            print(f"  Error calculating risk stratification metrics: {e}")
 
-# 4. Clinical Health Score Validation
-print("\n[3.2] Clinical Health Score Validation...")
+# Clinical Health Score validation
+print("\n3.2 Clinical Health Score Validation")
 if 'health_score' in df.columns and 'stage' in df.columns:
     gv_mi_mask = df['stage'].isin(['GV', 'MI'])
     if gv_mi_mask.sum() >= 4:
@@ -270,16 +239,16 @@ if 'health_score' in df.columns and 'stage' in df.columns:
                 'mean_difference': float(mean_diff)
             }
             
-            print(f"  ✓ CHS AUC (GV vs MI): {chs_auc:.3f}")
-            print(f"  ✓ Mann-Whitney U: {stat:.1f}, p = {pval:.4f}")
-            print(f"  ✓ Cohen's d: {cohens_d:.3f}")
-            print(f"  ✓ GV mean: {gv_scores.mean():.1f}, MI mean: {mi_scores.mean():.1f}")
+            print(f"  CHS AUC (GV vs MI): {chs_auc:.3f}")
+            print(f"  Mann-Whitney U: {stat:.1f}, p = {pval:.4f}")
+            print(f"  Cohen's d: {cohens_d:.3f}")
+            print(f"  GV mean: {gv_scores.mean():.1f}, MI mean: {mi_scores.mean():.1f}")
             
         except Exception as e:
-            print(f"  ⚠ Error: {e}")
+            print(f"  Error calculating CHS validation metrics: {e}")
 
-# 5. Sensitivity/Specificity Trade-offs at Different CHS Thresholds
-print("\n[3.3] Sensitivity/Specificity Trade-offs at CHS Thresholds...")
+# Sensitivity/specificity trade-offs at different CHS thresholds
+print("\n3.3 Sensitivity/Specificity Trade-offs at CHS Thresholds")
 if 'health_score' in df.columns and 'stage' in df.columns:
     gv_mi_mask = df['stage'].isin(['GV', 'MI'])
     if gv_mi_mask.sum() >= 4:
@@ -303,12 +272,11 @@ if 'health_score' in df.columns and 'stage' in df.columns:
                 })
         
         metrics_results['chs_threshold_analysis'] = threshold_metrics
-        print(f"  ✓ Analyzed {len(threshold_metrics)} threshold points")
+        print(f"  Analyzed {len(threshold_metrics)} threshold points")
 
-# 6. Calibration Plot
-print("\n[3.4] Generating Calibration Plot...")
+# Calibration plot data
+print("\n3.4 Generating Calibration Plot Data")
 if 'risk_score' in df.columns and 'risk_group' in df.columns:
-    # Create calibration plot: predicted risk vs observed risk
     risk_groups = df['risk_group'].unique()
     calibration_data = []
     
@@ -326,16 +294,11 @@ if 'risk_score' in df.columns and 'risk_group' in df.columns:
     
     metrics_results['calibration_data'] = calibration_data
 
-# ============================================================================
-# CATEGORY 4: Age Discrepancy & Heterogeneity
-# ============================================================================
+# Category 4: Age Discrepancy and Heterogeneity
+print("\nCategory 4: Age Discrepancy and Heterogeneity")
 
-print("\n" + "="*70)
-print("CATEGORY 4: AGE DISCREPANCY & HETEROGENEITY")
-print("="*70)
-
-# 7. Age Discrepancy Metrics
-print("\n[4.1] Age Discrepancy Analysis...")
+# Age discrepancy metrics
+print("\n4.1 Age Discrepancy Analysis")
 if 'cellular_age_z' in df.columns and 'age' in df.columns:
     age_mask = df['age'].notna() & df['cellular_age_z'].notna()
     if age_mask.sum() >= 3:
@@ -356,19 +319,18 @@ if 'cellular_age_z' in df.columns and 'age' in df.columns:
             'n_accelerated': int(accelerated_mask.sum())
         }
         
-        print(f"  ✓ Mean age discrepancy: {age_discrepancy.mean():.3f}")
-        print(f"  ✓ Median age discrepancy: {age_discrepancy.median():.3f}")
-        print(f"  ✓ Accelerated agers: {accelerated_pct:.1f}% (Z > age + 0.2)")
+        print(f"  Mean age discrepancy: {age_discrepancy.mean():.3f}")
+        print(f"  Median age discrepancy: {age_discrepancy.median():.3f}")
+        print(f"  Accelerated agers: {accelerated_pct:.1f}% (Z > age + 0.2)")
 
-# 8. Heterogeneity Quantification
-print("\n[4.2] Heterogeneity Quantification...")
+# Heterogeneity quantification
+print("\n4.2 Heterogeneity Quantification")
 if 'cellular_age_uncertainty' in df.columns:
     uncertainty = df['cellular_age_uncertainty'].dropna()
     cv_uncertainty = uncertainty.std() / uncertainty.mean() if uncertainty.mean() > 0 else 0
     
-    # Between-donor vs within-donor variance (if donor info available)
+    # Between-donor vs within-donor variance
     if 'donor' in df.columns or 'age' in df.columns:
-        # Use age as proxy for donor groups
         if 'age' in df.columns:
             age_groups = pd.cut(df['age'], bins=3, labels=['Young', 'Middle', 'Old'])
             between_donor_var = df.groupby(age_groups)['cellular_age_uncertainty'].mean().var()
@@ -384,23 +346,16 @@ if 'cellular_age_uncertainty' in df.columns:
         'variance_ratio': float(variance_ratio)
     }
     
-    print(f"  ✓ Coefficient of variation (uncertainty): {cv_uncertainty:.3f}")
-    print(f"  ✓ Variance ratio (between/within): {variance_ratio:.3f}")
+    print(f"  Coefficient of variation (uncertainty): {cv_uncertainty:.3f}")
+    print(f"  Variance ratio (between/within): {variance_ratio:.3f}")
 
-# ============================================================================
-# CATEGORY 5: Trajectory Fidelity
-# ============================================================================
+# Category 5: Trajectory Fidelity
+print("\nCategory 5: Trajectory Fidelity")
 
-print("\n" + "="*70)
-print("CATEGORY 5: TRAJECTORY FIDELITY")
-print("="*70)
-
-# 9. Kendall's Tau for Rank Correlation
-print("\n[5.1] Trajectory Rank Correlation...")
-# If we had pseudotime, we could compare it to cellular_age_z
-# For now, we'll note this requires pseudotime data
+# Kendall's tau for rank correlation
+print("\n5.1 Trajectory Rank Correlation")
 if 'cellular_age_z' in df.columns and 'stage' in df.columns:
-    # Create expected order: GV should have lower Z than MI
+    # Expected order: GV should have lower Z than MI
     stage_order = {'GV': 0, 'MI': 1, 'MII': 2}
     expected_ranks = df['stage'].map(stage_order).fillna(1.5).values
     actual_ranks = df['cellular_age_z'].rank().values
@@ -412,21 +367,15 @@ if 'cellular_age_z' in df.columns and 'stage' in df.columns:
         'kendalls_tau_p': float(pval_tau)
     }
     
-    print(f"  ✓ Kendall's tau (expected vs actual ranks): {tau:.3f}, p = {pval_tau:.4f}")
+    print(f"  Kendall's tau (expected vs actual ranks): {tau:.3f}, p = {pval_tau:.4f}")
 
-# ============================================================================
-# Generate Comprehensive Visualizations
-# ============================================================================
+# Generate comprehensive visualizations
+print("\nGenerating Comprehensive Visualizations")
 
-print("\n" + "="*70)
-print("GENERATING COMPREHENSIVE VISUALIZATIONS")
-print("="*70)
-
-# Create comprehensive metrics summary figure
 fig = plt.figure(figsize=(20, 14))
 gs = GridSpec(3, 3, figure=fig, hspace=0.3, wspace=0.3)
 
-# 1. ROC Curve
+# ROC curve
 ax1 = fig.add_subplot(gs[0, 0])
 if 'risk_stratification' in metrics_results and 'is_high_risk' in df.columns:
     fpr, tpr, _ = roc_curve(df['is_high_risk'], df['risk_score'])
@@ -438,7 +387,7 @@ if 'risk_stratification' in metrics_results and 'is_high_risk' in df.columns:
     ax1.legend()
     ax1.grid(True, alpha=0.3)
 
-# 2. Precision-Recall Curve
+# Precision-Recall curve
 ax2 = fig.add_subplot(gs[0, 1])
 if 'risk_stratification' in metrics_results and 'is_high_risk' in df.columns:
     precision, recall, _ = precision_recall_curve(df['is_high_risk'], df['risk_score'])
@@ -449,7 +398,7 @@ if 'risk_stratification' in metrics_results and 'is_high_risk' in df.columns:
     ax2.legend()
     ax2.grid(True, alpha=0.3)
 
-# 3. Calibration Plot
+# Calibration plot
 ax3 = fig.add_subplot(gs[0, 2])
 if 'calibration_data' in metrics_results:
     cal_data = pd.DataFrame(metrics_results['calibration_data'])
@@ -462,7 +411,7 @@ if 'calibration_data' in metrics_results:
     ax3.legend()
     ax3.grid(True, alpha=0.3)
 
-# 4. CHS Threshold Analysis
+# CHS threshold analysis
 ax4 = fig.add_subplot(gs[1, 0])
 if 'chs_threshold_analysis' in metrics_results:
     thresh_df = pd.DataFrame(metrics_results['chs_threshold_analysis'])
@@ -474,7 +423,7 @@ if 'chs_threshold_analysis' in metrics_results:
     ax4.legend()
     ax4.grid(True, alpha=0.3)
 
-# 5. Age Discrepancy
+# Age discrepancy
 ax5 = fig.add_subplot(gs[1, 1])
 if 'age_discrepancy' in metrics_results and 'cellular_age_z' in df.columns and 'age' in df.columns:
     age_mask = df['age'].notna() & df['cellular_age_z'].notna()
@@ -489,7 +438,7 @@ if 'age_discrepancy' in metrics_results and 'cellular_age_z' in df.columns and '
         ax5.legend()
         ax5.grid(True, alpha=0.3)
 
-# 6. Uncertainty Distribution
+# Uncertainty distribution
 ax6 = fig.add_subplot(gs[1, 2])
 if 'cellular_age_uncertainty' in df.columns:
     uncertainty = df['cellular_age_uncertainty'].dropna()
@@ -502,7 +451,7 @@ if 'cellular_age_uncertainty' in df.columns:
     ax6.legend()
     ax6.grid(True, alpha=0.3, axis='y')
 
-# 7. Correlation Matrix
+# Correlation summary
 ax7 = fig.add_subplot(gs[2, 0:2])
 if 'correlations' in metrics_results:
     corr_data = []
@@ -520,11 +469,10 @@ if 'correlations' in metrics_results:
         ax7.legend()
         ax7.grid(True, alpha=0.3, axis='x')
         
-        # Add value labels
         for i, (bar, val) in enumerate(zip(bars, corr_data)):
             ax7.text(val, i, f' {val:.3f}', va='center', fontweight='bold')
 
-# 8. Metrics Summary Table
+# Metrics summary table
 ax8 = fig.add_subplot(gs[2, 2])
 ax8.axis('off')
 summary_text = "METRICS SUMMARY\n\n"
@@ -545,35 +493,24 @@ ax8.text(0.1, 0.5, summary_text, fontsize=10, family='monospace',
 plt.suptitle('Comprehensive Metrics Evaluation', fontsize=16, fontweight='bold', y=0.995)
 plt.savefig('../visualizations/comprehensive_metrics_summary.png', dpi=300, bbox_inches='tight')
 plt.close()
-print("✓ Saved: ../visualizations/comprehensive_metrics_summary.png")
+print("Saved: ../visualizations/comprehensive_metrics_summary.png")
 
-# ============================================================================
-# Save Metrics to JSON
-# ============================================================================
-
+# Save metrics to JSON
 metrics_file = '../data/metrics_results.json'
 with open(metrics_file, 'w') as f:
     json.dump(metrics_results, f, indent=2)
-print(f"✓ Saved metrics to: {metrics_file}")
+print(f"Saved metrics to: {metrics_file}")
 
-# ============================================================================
-# Print Summary
-# ============================================================================
-
-print("\n" + "="*70)
-print("METRICS CALCULATION COMPLETE")
-print("="*70)
+# Print summary
+print("\nMetrics Calculation Complete")
 print("\nCalculated Metrics:")
-print(f"  ✓ Latent Space Quality: {len(metrics_results.get('latent_space', {}))} metrics")
-print(f"  ✓ Correlations: {len(metrics_results.get('correlations', {}))} metrics")
-print(f"  ✓ Uncertainty Calibration: {len(metrics_results.get('uncertainty_calibration', {}))} metrics")
-print(f"  ✓ Risk Stratification: {len(metrics_results.get('risk_stratification', {}))} metrics")
-print(f"  ✓ CHS Validation: {len(metrics_results.get('chs_validation', {}))} metrics")
-print(f"  ✓ Age Discrepancy: {len(metrics_results.get('age_discrepancy', {}))} metrics")
-print(f"  ✓ Heterogeneity: {len(metrics_results.get('heterogeneity', {}))} metrics")
-print(f"  ✓ Trajectory Fidelity: {len(metrics_results.get('trajectory_fidelity', {}))} metrics")
+print(f"  Latent Space Quality: {len(metrics_results.get('latent_space', {}))} metrics")
+print(f"  Correlations: {len(metrics_results.get('correlations', {}))} metrics")
+print(f"  Uncertainty Calibration: {len(metrics_results.get('uncertainty_calibration', {}))} metrics")
+print(f"  Risk Stratification: {len(metrics_results.get('risk_stratification', {}))} metrics")
+print(f"  CHS Validation: {len(metrics_results.get('chs_validation', {}))} metrics")
+print(f"  Age Discrepancy: {len(metrics_results.get('age_discrepancy', {}))} metrics")
+print(f"  Heterogeneity: {len(metrics_results.get('heterogeneity', {}))} metrics")
+print(f"  Trajectory Fidelity: {len(metrics_results.get('trajectory_fidelity', {}))} metrics")
 
-print("\n" + "="*70)
-print("All feasible metrics from METRICS_EVALUATION.md have been calculated!")
-print("="*70)
-
+print("\nAll feasible metrics from METRICS_EVALUATION.md have been calculated.")

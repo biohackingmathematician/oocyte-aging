@@ -15,23 +15,21 @@ import matplotlib.patches as mpatches
 from matplotlib.patches import Rectangle
 import os
 
-print("="*70)
+print("")
 print("COMBINED INTERVENTION PLOT: Pseudotime/Latent Age vs Health Score")
-print("="*70)
+print("")
 
-# ============================================================================
 # Load Data
-# ============================================================================
 
 clinical_csv = '../data/clinical_decision_framework_final.csv'
 sample_csv = '../data/sample_metadata_with_age.csv'
 
 if not os.path.exists(clinical_csv):
-    print("❌ ERROR: clinical_decision_framework_final.csv not found")
+    print(" Error: clinical_decision_framework_final.csv not found")
     exit(1)
 
 df = pd.read_csv(clinical_csv, index_col=0)
-print(f"✓ Loaded clinical data: {len(df)} samples")
+print(f" Loaded clinical data: {len(df)} samples")
 
 # Load sample metadata for stage and potential pseudotime
 if os.path.exists(sample_csv):
@@ -41,16 +39,14 @@ if os.path.exists(sample_csv):
         df = df.merge(sample_df[['sample', 'stage']], 
                      left_index=True, right_on='sample', how='left')
         df.set_index('sample', inplace=True, drop=False)
-        print(f"✓ Merged stage information")
+        print(f" Merged stage information")
 else:
     df['stage'] = 'Unknown'
 
-# ============================================================================
 # Compute/Estimate Health Score if Missing
-# ============================================================================
 
 if 'health_score' not in df.columns and 'oocyte_health_score' not in df.columns:
-    print("\n⚠ Health score not found. Computing proxy from available data...")
+    print("\n Health score not found. Computing proxy from available data...")
     
     # Proxy health score based on:
     # 1. Inverse of risk_score (lower risk = higher health)
@@ -77,54 +73,46 @@ if 'health_score' not in df.columns and 'oocyte_health_score' not in df.columns:
     health_score = (0.4 * risk_norm + 0.4 * stage_score + 0.2 * unc_norm) * 100
     
     df['health_score'] = health_score
-    print(f"✓ Computed proxy health score (range: {df['health_score'].min():.1f}-{df['health_score'].max():.1f})")
+    print(f" Computed proxy health score (range: {df['health_score'].min():.1f}-{df['health_score'].max():.1f})")
 else:
     health_col = 'health_score' if 'health_score' in df.columns else 'oocyte_health_score'
     df['health_score'] = df[health_col]
-    print(f"✓ Using existing health score (range: {df['health_score'].min():.1f}-{df['health_score'].max():.1f})")
+    print(f" Using existing health score (range: {df['health_score'].min():.1f}-{df['health_score'].max():.1f})")
 
-# ============================================================================
 # Get X-axis: Pseudotime or Latent Age Z
-# ============================================================================
 
 # Try to find pseudotime first, fallback to cellular_age_z
 if 'dpt_pseudotime' in df.columns:
     x_data = df['dpt_pseudotime'].values
     x_label = 'Diffusion Pseudotime (τ)'
-    print(f"✓ Using DPT pseudotime (range: {x_data.min():.3f}-{x_data.max():.3f})")
+    print(f" Using DPT pseudotime (range: {x_data.min():.3f}-{x_data.max():.3f})")
 elif 'pseudotime' in df.columns:
     x_data = df['pseudotime'].values
     x_label = 'Pseudotime'
-    print(f"✓ Using pseudotime (range: {x_data.min():.3f}-{x_data.max():.3f})")
+    print(f" Using pseudotime (range: {x_data.min():.3f}-{x_data.max():.3f})")
 elif 'cellular_age_z' in df.columns:
     x_data = df['cellular_age_z'].values
     x_label = 'Cellular Age (Latent Z)'
-    print(f"✓ Using cellular age Z (range: {x_data.min():.3f}-{x_data.max():.3f})")
+    print(f" Using cellular age Z (range: {x_data.min():.3f}-{x_data.max():.3f})")
 else:
-    print("❌ ERROR: No pseudotime or cellular_age_z found")
+    print(" Error: No pseudotime or cellular_age_z found")
     exit(1)
 
-# ============================================================================
 # Get Y-axis: Health Score
-# ============================================================================
 
 y_data = df['health_score'].values
 y_label = 'Clinical Health Score (CHS)'
 
-# ============================================================================
 # Get Uncertainty for Size/Color
-# ============================================================================
 
 if 'cellular_age_uncertainty' in df.columns:
     uncertainty = df['cellular_age_uncertainty'].values
-    print(f"✓ Using uncertainty (range: {uncertainty.min():.2f}-{uncertainty.max():.2f})")
+    print(f" Using uncertainty (range: {uncertainty.min():.2f}-{uncertainty.max():.2f})")
 else:
-    print("⚠ Uncertainty not found. Using constant uncertainty.")
+    print(" Uncertainty not found. Using constant uncertainty.")
     uncertainty = np.ones(len(df)) * 0.5
 
-# ============================================================================
 # Define Thresholds
-# ============================================================================
 
 # Define thresholds based on percentiles
 critical_threshold = np.percentile(y_data, 25)  # Bottom 25% = critical
@@ -136,18 +124,14 @@ print(f"  Critical: {critical_threshold:.1f} (bottom 25%)")
 print(f"  Warning: {warning_threshold:.1f} (median)")
 print(f"  Optimal: {optimal_threshold:.1f} (top 25%)")
 
-# ============================================================================
 # Define Optimal Intervention Window
-# ============================================================================
 
 # Optimal window: High CHS (>= optimal_threshold) AND Low uncertainty (bottom 33%)
 uncertainty_low_threshold = np.percentile(uncertainty, 33)  # Bottom 33% = low uncertainty
 
 print(f"  Low uncertainty threshold: {uncertainty_low_threshold:.2f} (bottom 33%)")
 
-# ============================================================================
 # Create Combined Plot
-# ============================================================================
 
 print("\n[Creating combined intervention plot...]")
 
@@ -269,7 +253,7 @@ plt.savefig('../visualizations/combined_intervention_plot.png', dpi=300, bbox_in
            facecolor='white', edgecolor='none')
 plt.close()
 
-print("✓ Saved: combined_intervention_plot.png")
+print(" Saved: combined_intervention_plot.png")
 
 # Print summary
 print(f"\n{'='*70}")
@@ -287,6 +271,6 @@ print(f"\nX-axis ({x_label}):")
 print(f"  Range: [{x_data.min():.3f}, {x_data.max():.3f}]")
 
 print(f"\n{'='*70}")
-print("✓ Combined intervention plot complete!")
+print(" Combined intervention plot complete!")
 print(f"{'='*70}")
 

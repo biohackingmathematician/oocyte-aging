@@ -14,16 +14,16 @@ from sklearn.preprocessing import StandardScaler
 import os
 import seaborn as sns
 
-print("="*70)
+print("")
 print("FORUM EDA VISUALIZATIONS")
-print("="*70)
+print("")
 
 # Load data
 sample_csv = '../data/sample_metadata_with_age.csv'
 clinical_csv = '../data/clinical_decision_framework_final.csv'
 
 if not os.path.exists(sample_csv) or not os.path.exists(clinical_csv):
-    print("❌ ERROR: Required CSV files not found")
+    print(" Error: Required CSV files not found")
     exit(1)
 
 sample_df = pd.read_csv(sample_csv)
@@ -31,25 +31,23 @@ clinical_df = pd.read_csv(clinical_csv, index_col=0)
 
 # Merge data
 merged = clinical_df.merge(sample_df, left_index=True, right_on='sample', how='inner')
-print(f"✓ Loaded data: {len(merged)} samples")
+print(f" Loaded data: {len(merged)} samples")
 
 # Check if health score exists, compute if needed
 health_col = 'oocyte_health_score' if 'oocyte_health_score' in merged.columns else 'health_score'
 if health_col not in merged.columns or merged[health_col].isna().all():
-    print("⚠ Computing health score from cellular_age_z (proxy)...")
+    print(" Computing health score from cellular_age_z (proxy)...")
     if 'cellular_age_z' in merged.columns:
         # Inverse relationship: lower cellular age = higher health
         merged['health_score'] = (1 - merged['cellular_age_z']) * 100
         health_col = 'health_score'
-        print("✓ Computed health score")
+        print(" Computed health score")
 
 # Filter to GV and MI only for cleaner visualization
 df_plot = merged[merged['stage'].isin(['GV', 'MI'])].copy()
 print(f"  Filtered to GV/MI: {len(df_plot)} samples (GV: {len(df_plot[df_plot['stage']=='GV'])}, MI: {len(df_plot[df_plot['stage']=='MI'])})")
 
-# ============================================================================
 # VISUALIZATION 1: UMAP/PCA Colored by Stage
-# ============================================================================
 
 print("\n[1/2] Creating UMAP/PCA plot colored by stage...")
 
@@ -85,7 +83,7 @@ if len(pca_features) >= 2:
     pca = PCA(n_components=2)
     pca_coords = pca.fit_transform(X_scaled)
     
-    print(f"✓ Computed PCA from {len(feature_names)} features: {feature_names}")
+    print(f" Computed PCA from {len(feature_names)} features: {feature_names}")
     print(f"  PC1 variance explained: {pca.explained_variance_ratio_[0]:.2%}")
     print(f"  PC2 variance explained: {pca.explained_variance_ratio_[1]:.2%}")
     print(f"  Total variance explained: {pca.explained_variance_ratio_.sum():.2%}")
@@ -128,19 +126,17 @@ if len(pca_features) >= 2:
     plt.savefig('../visualizations/forum_umap_pca_by_stage.png', dpi=300, bbox_inches='tight', 
                 facecolor='white', edgecolor='none')
     plt.close()
-    print("✓ Saved: forum_umap_pca_by_stage.png")
+    print(" Saved: forum_umap_pca_by_stage.png")
     
 else:
-    print("⚠ Not enough features for PCA - skipping plot")
+    print(" Not enough features for PCA - skipping plot")
 
-# ============================================================================
 # VISUALIZATION 2: Box/Violin Plot of Health Score by Stage
-# ============================================================================
 
 print("\n[2/2] Creating health score box/violin plot by stage...")
 
 if health_col not in df_plot.columns or df_plot[health_col].isna().all():
-    print("❌ ERROR: Health score not available")
+    print(" Error: Health score not available")
     exit(1)
 
 # Prepare data
@@ -148,7 +144,7 @@ gv_scores = df_plot[df_plot['stage'] == 'GV'][health_col].dropna()
 mi_scores = df_plot[df_plot['stage'] == 'MI'][health_col].dropna()
 
 if len(gv_scores) == 0 or len(mi_scores) == 0:
-    print("❌ ERROR: Insufficient data for comparison")
+    print(" Error: Insufficient data for comparison")
     exit(1)
 
 # Statistical test
@@ -302,7 +298,7 @@ plt.tight_layout(rect=[0, 0, 1, 0.96])
 plt.savefig('../visualizations/forum_health_score_by_stage.png', dpi=300, bbox_inches='tight', 
             facecolor='white', edgecolor='none')
 plt.close()
-print("✓ Saved: forum_health_score_by_stage.png")
+print(" Saved: forum_health_score_by_stage.png")
 
 # Summary statistics
 print(f"\nSummary statistics:")
@@ -310,11 +306,11 @@ print(f"  GV: n={len(gv_scores)}, Mean={np.mean(gv_scores):.2f}, Median={np.medi
 print(f"  MI: n={len(mi_scores)}, Mean={np.mean(mi_scores):.2f}, Median={np.median(mi_scores):.2f}, SD={np.std(mi_scores):.2f}")
 
 print("\n" + "="*70)
-print("✓ Forum EDA Visualizations Created!")
-print("="*70)
+print(" Forum EDA Visualizations Created!")
+print("")
 print("\nGenerated files:")
-print("  ✓ forum_umap_pca_by_stage.png")
-print("  ✓ forum_health_score_by_stage.png")
+print("   forum_umap_pca_by_stage.png")
+print("   forum_health_score_by_stage.png")
 print("\nThese visualizations show:")
 print("  1. Global structure: GV and MI separate along main axis")
 print("  2. GV oocytes look healthier than MI at transcriptomic level")

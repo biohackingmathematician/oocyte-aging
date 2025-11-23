@@ -63,7 +63,7 @@ This document evaluates the current implementation against the research objectiv
 
 #### B. Uncertainty Calibration (Partially Implemented)
 
-**Status**: ⚠️ Partially Implemented
+**Status**: ️ Partially Implemented
 
 **Current**: Uncertainty values (σ) calculated heuristically
 
@@ -306,10 +306,10 @@ This document evaluates the current implementation against the research objectiv
 
 | Method | Uncertainty | Clinical Output | Correlation with Age | Limitations |
 |--------|-------------|-----------------|---------------------|-------------|
-| DPT (Current) | ❌ | Health score | ρ = -0.79 | No uncertainty |
+| DPT (Current) |  | Health score | ρ = -0.79 | No uncertainty |
 | PCA-based (Current) | ✅ σ² (heuristic) | Health score + risk groups | [TO VALIDATE] | Not true Bayesian |
 | GPLVM (Planned) | ✅ σ² (Bayesian) | Health score + CI | Target r > 0.75 | Requires compatible Python |
-| Monocle (Literature) | ❌ | Trajectory only | Variable | No clinical translation |
+| Monocle (Literature) |  | Trajectory only | Variable | No clinical translation |
 | **Our Framework** | ✅ | Risk groups + timing | [TO SHOW] | Small sample size (n=20) |
 
 ---

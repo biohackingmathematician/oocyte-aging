@@ -121,8 +121,8 @@ bash run_all_visualizations.sh
 ## Updates from Previous Version
 
 ### Removed
-- ❌ Stage distribution histogram/bar chart
-- ❌ Age distribution histograms
+-  Stage distribution histogram/bar chart
+-  Age distribution histograms
 
 ### Added
 - ✅ PCA plot colored by stage (shows global structure)

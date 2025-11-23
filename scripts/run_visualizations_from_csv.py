@@ -11,41 +11,39 @@ import matplotlib.pyplot as plt
 from scipy import stats
 import os
 
-print("="*70)
+print("")
 print("PROJECT FORUM VISUALIZATIONS - From CSV Data")
-print("="*70)
+print("")
 
 # Load available CSV files
 sample_csv = '../data/sample_metadata_with_age.csv'
 clinical_csv = '../data/clinical_decision_framework_final.csv'
 
 if not os.path.exists(sample_csv):
-    print(f"❌ ERROR: {sample_csv} not found")
+    print(f" Error: {sample_csv} not found")
     exit(1)
 
 if not os.path.exists(clinical_csv):
-    print(f"❌ ERROR: {clinical_csv} not found")
+    print(f" Error: {clinical_csv} not found")
     exit(1)
 
 # Load data
 sample_df = pd.read_csv(sample_csv)
 clinical_df = pd.read_csv(clinical_csv, index_col=0)
 
-print(f"✓ Loaded sample metadata: {len(sample_df)} samples")
-print(f"✓ Loaded clinical data: {len(clinical_df)} samples")
+print(f" Loaded sample metadata: {len(sample_df)} samples")
+print(f" Loaded clinical data: {len(clinical_df)} samples")
 
 # Merge data
 merged = clinical_df.merge(sample_df, left_index=True, right_on='sample', how='inner')
-print(f"✓ Merged data: {len(merged)} samples")
+print(f" Merged data: {len(merged)} samples")
 
 # Check what we have
 print(f"\nAvailable columns: {list(merged.columns)}")
 print(f"\nStage distribution:")
 print(merged['stage'].value_counts())
 
-# ============================================================================
 # VISUALIZATION 1: Simplified Stage Distribution
-# ============================================================================
 
 print("\n[1/2] Creating stage distribution visualization...")
 
@@ -126,11 +124,9 @@ else:
 plt.tight_layout(pad=2.0, w_pad=3.0, h_pad=2.0)
 plt.savefig('../visualizations/forum_stage_overview.png', dpi=300, bbox_inches='tight', facecolor='white')
 plt.close()
-print("✓ Saved: forum_stage_overview.png")
+print(" Saved: forum_stage_overview.png")
 
-# ============================================================================
 # VISUALIZATION 2: Boxplot Comparison (using available metrics)
-# ============================================================================
 
 print("\n[2/2] Creating comparison boxplot...")
 
@@ -152,7 +148,7 @@ for col, name in metrics_to_try:
         break
 
 if available_metric is None:
-    print("⚠ No health score or comparable metric found")
+    print(" No health score or comparable metric found")
     print(f"  Available numeric columns: {merged.select_dtypes(include=[np.number]).columns.tolist()}")
     print("  Creating age-based comparison instead...")
     
@@ -164,7 +160,7 @@ if available_metric is None:
 df_plot = merged[merged['stage'].isin(['GV', 'MI'])].copy()
 
 if len(df_plot) == 0:
-    print("⚠ No GV or MI samples found")
+    print(" No GV or MI samples found")
     df_plot = merged.copy()
 
 # Prepare data
@@ -183,7 +179,7 @@ if len(mi_values) > 0:
     labels.append(f'MI\n(n={len(mi_values)})')
 
 if len(values_by_stage) == 0:
-    print("❌ ERROR: No data available for boxplot")
+    print(" Error: No data available for boxplot")
     exit(1)
 
 # Statistical test
@@ -267,7 +263,7 @@ output_file = 'forum_health_score_boxplot.png' if 'health' in metric_name.lower(
 plt.tight_layout(pad=2.0)
 plt.savefig(output_file, dpi=300, bbox_inches='tight', facecolor='white', pad_inches=0.1)
 plt.close()
-print(f"✓ Saved: {output_file}")
+print(f" Saved: {output_file}")
 
 print(f"\nSummary statistics for {metric_name}:")
 for i, (vals, label) in enumerate(zip(values_by_stage, labels)):
@@ -280,12 +276,12 @@ for i, (vals, label) in enumerate(zip(values_by_stage, labels)):
     print(f"  Range = [{np.min(vals):.2f}, {np.max(vals):.2f}]")
 
 print("\n" + "="*70)
-print("✓ Visualizations generated from CSV data!")
-print("="*70)
+print(" Visualizations generated from CSV data!")
+print("")
 print("\nGenerated files:")
 if os.path.exists('forum_stage_overview.png'):
-    print("  ✓ forum_stage_overview.png")
+    print("   forum_stage_overview.png")
 if os.path.exists(output_file):
-    print(f"  ✓ {output_file}")
+    print(f"   {output_file}")
 print("\nNote: UMAP plot requires h5ad files. Run notebook cells first to generate them.")
 
