@@ -20,8 +20,8 @@ print("="*70)
 # Load Metadata
 # ============================================================================
 
-sample_csv = './sample_metadata_with_age.csv'
-clinical_csv = './clinical_decision_framework_final.csv'
+sample_csv = '../data/sample_metadata_with_age.csv'
+clinical_csv = '../data/clinical_decision_framework_final.csv'
 
 if not os.path.exists(sample_csv):
     print("❌ ERROR: sample_metadata_with_age.csv not found")
@@ -157,7 +157,7 @@ else:
     axes[1].axis('off')
 
 plt.tight_layout(rect=[0, 0, 1, 0.96])
-plt.savefig('forum_raw_sample_composition.png', dpi=300, bbox_inches='tight',
+plt.savefig('../visualizations/forum_raw_sample_composition.png', dpi=300, bbox_inches='tight',
             facecolor='white', edgecolor='none')
 plt.close()
 print("✓ Saved: forum_raw_sample_composition.png")
@@ -315,7 +315,7 @@ if os.path.exists(zenodo_dir):
                          title_fontsize=11)
         
         plt.tight_layout()
-        plt.savefig('forum_raw_expression_heatmap.png', dpi=300, bbox_inches='tight',
+        plt.savefig('../visualizations/forum_raw_expression_heatmap.png', dpi=300, bbox_inches='tight',
                    facecolor='white', edgecolor='none')
         plt.close()
         print("✓ Saved: forum_raw_expression_heatmap.png")
@@ -360,7 +360,7 @@ def create_placeholder_heatmap():
     cbar.set_label('Log(TPM + 1)', fontsize=11, fontweight='bold')
     
     plt.tight_layout()
-    plt.savefig('forum_raw_expression_heatmap.png', dpi=300, bbox_inches='tight',
+    plt.savefig('../visualizations/forum_raw_expression_heatmap.png', dpi=300, bbox_inches='tight',
                facecolor='white', edgecolor='none')
     plt.close()
     print("✓ Saved: forum_raw_expression_heatmap.png (placeholder)")

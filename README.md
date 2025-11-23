@@ -22,20 +22,54 @@ This uses a multi-dimensional Bayesian generative model to quantify variability 
 
 ```
 .
- ADSPROJECT_new.ipynb          # Main analysis notebook
- README.md                      # This file
- RESULTS.md                     # Detailed results summary
- METRICS_EVALUATION.md         # Comprehensive metrics evaluation and recommendations
- calculate_metrics.py          # Script to calculate validation metrics
- clinical_decision_framework_final.csv  # Clinical predictions
- gplvm_trajectory_analysis.png # GPLVM visualization
- risk_stratification.png       # Risk group visualization
- complete_results_summary.png  # Comprehensive summary
- metrics_roc_curve.png         # ROC curve for risk stratification
- metrics_pr_curve.png          # Precision-Recall curve
- zenodo_data/                  # Zenodo dataset (20 oocytes)
- geo_data/                     # GEO datasets (GSE155179, GSE95477)
- [Documentation files]
+├── ADSPROJECT_new.ipynb       # Main analysis notebook
+├── ADSPROJECT_base.ipynb     # Base notebook (reference)
+├── README.md                  # This file
+├── RESULTS.md                 # Detailed results summary
+├── LICENSE                    # MIT License
+│
+├── docs/                      # Documentation
+│   ├── INSTALLATION_GUIDE.md
+│   ├── QUICK_START.md
+│   ├── METRICS_EVALUATION.md  # Comprehensive metrics evaluation
+│   ├── RAW_DATASETS_EDA.md
+│   ├── FORUM_EDA_VISUALIZATIONS.md
+│   └── *.pdf                  # Reference papers and reports
+│
+├── scripts/                   # Analysis and visualization scripts
+│   ├── calculate_metrics.py  # Calculate validation metrics
+│   ├── create_combined_intervention_plot.py
+│   ├── create_complete_results_summary.py
+│   ├── create_forum_eda_visualizations.py
+│   ├── create_forum_raw_eda.py
+│   ├── create_raw_datasets_eda.py
+│   ├── run_all_visualizations.sh
+│   └── run_visualizations_from_csv.py
+│
+├── visualizations/            # Generated figures
+│   ├── combined_intervention_plot.png
+│   ├── complete_results_summary.png
+│   ├── gplvm_trajectory_analysis.png
+│   ├── risk_stratification.png
+│   ├── metrics_roc_curve.png
+│   ├── metrics_pr_curve.png
+│   └── [other visualization files]
+│
+├── data/                      # Data files
+│   ├── clinical_decision_framework_final.csv
+│   ├── sample_metadata.csv
+│   └── sample_metadata_with_age.csv
+│
+├── zenodo_data/              # Zenodo dataset (20 oocytes)
+│   └── final_code/
+│       ├── kallisto/         # Kallisto abundance files
+│       ├── DeSeq2/           # Differential expression results
+│       ├── EdgeR/            # EdgeR analysis results
+│       └── [other analysis files]
+│
+└── geo_data/                 # GEO datasets
+    ├── GSE155179_family.soft.gz
+    └── GSE95477_family.soft.gz
 ```
 
 ---

@@ -16,8 +16,8 @@ print("PROJECT FORUM VISUALIZATIONS - From CSV Data")
 print("="*70)
 
 # Load available CSV files
-sample_csv = './sample_metadata_with_age.csv'
-clinical_csv = './clinical_decision_framework_final.csv'
+sample_csv = '../data/sample_metadata_with_age.csv'
+clinical_csv = '../data/clinical_decision_framework_final.csv'
 
 if not os.path.exists(sample_csv):
     print(f"❌ ERROR: {sample_csv} not found")
@@ -124,7 +124,7 @@ else:
 
 # Adjust spacing to avoid blank spaces
 plt.tight_layout(pad=2.0, w_pad=3.0, h_pad=2.0)
-plt.savefig('forum_stage_overview.png', dpi=300, bbox_inches='tight', facecolor='white')
+plt.savefig('../visualizations/forum_stage_overview.png', dpi=300, bbox_inches='tight', facecolor='white')
 plt.close()
 print("✓ Saved: forum_stage_overview.png")
 

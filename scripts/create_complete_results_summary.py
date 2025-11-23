@@ -21,8 +21,8 @@ print("COMPLETE RESULTS SUMMARY - OOCYTE AGING ANALYSIS")
 print("="*70)
 
 # Load data
-sample_csv = './sample_metadata_with_age.csv'
-clinical_csv = './clinical_decision_framework_final.csv'
+sample_csv = '../data/sample_metadata_with_age.csv'
+clinical_csv = '../data/clinical_decision_framework_final.csv'
 
 if not os.path.exists(sample_csv) or not os.path.exists(clinical_csv):
     print("❌ ERROR: Required CSV files not found")
@@ -378,7 +378,7 @@ ax_i.text(0.05, 0.95, summary_text, ha='left', va='top', transform=ax_i.transAxe
 
 fig.suptitle('Complete Results Summary: Oocyte Aging Analysis', fontsize=16, fontweight='bold', y=0.995)
 
-plt.savefig('complete_results_summary.png', dpi=300, bbox_inches='tight', 
+plt.savefig('../visualizations/complete_results_summary.png', dpi=300, bbox_inches='tight', 
             facecolor='white', edgecolor='none', pad_inches=0.2)
 plt.close()
 

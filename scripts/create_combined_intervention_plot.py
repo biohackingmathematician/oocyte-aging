@@ -23,8 +23,8 @@ print("="*70)
 # Load Data
 # ============================================================================
 
-clinical_csv = './clinical_decision_framework_final.csv'
-sample_csv = './sample_metadata_with_age.csv'
+clinical_csv = '../data/clinical_decision_framework_final.csv'
+sample_csv = '../data/sample_metadata_with_age.csv'
 
 if not os.path.exists(clinical_csv):
     print("❌ ERROR: clinical_decision_framework_final.csv not found")
@@ -265,7 +265,7 @@ if 'stage' in df.columns:
            bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.5))
 
 plt.tight_layout()
-plt.savefig('combined_intervention_plot.png', dpi=300, bbox_inches='tight',
+plt.savefig('../visualizations/combined_intervention_plot.png', dpi=300, bbox_inches='tight',
            facecolor='white', edgecolor='none')
 plt.close()
 

@@ -19,8 +19,8 @@ print("FORUM EDA VISUALIZATIONS")
 print("="*70)
 
 # Load data
-sample_csv = './sample_metadata_with_age.csv'
-clinical_csv = './clinical_decision_framework_final.csv'
+sample_csv = '../data/sample_metadata_with_age.csv'
+clinical_csv = '../data/clinical_decision_framework_final.csv'
 
 if not os.path.exists(sample_csv) or not os.path.exists(clinical_csv):
     print("❌ ERROR: Required CSV files not found")
@@ -125,7 +125,7 @@ if len(pca_features) >= 2:
                  fontsize=13, fontweight='bold')
     
     plt.tight_layout()
-    plt.savefig('forum_umap_pca_by_stage.png', dpi=300, bbox_inches='tight', 
+    plt.savefig('../visualizations/forum_umap_pca_by_stage.png', dpi=300, bbox_inches='tight', 
                 facecolor='white', edgecolor='none')
     plt.close()
     print("✓ Saved: forum_umap_pca_by_stage.png")
@@ -299,7 +299,7 @@ plt.suptitle('GV Oocytes Look Healthier Than MI at Transcriptomic Level',
              fontsize=15, fontweight='bold', y=0.98)
 
 plt.tight_layout(rect=[0, 0, 1, 0.96])
-plt.savefig('forum_health_score_by_stage.png', dpi=300, bbox_inches='tight', 
+plt.savefig('../visualizations/forum_health_score_by_stage.png', dpi=300, bbox_inches='tight', 
             facecolor='white', edgecolor='none')
 plt.close()
 print("✓ Saved: forum_health_score_by_stage.png")

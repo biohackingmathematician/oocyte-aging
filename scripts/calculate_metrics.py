@@ -23,8 +23,8 @@ print("="*70)
 # Load Data
 # ============================================================================
 
-clinical_csv = './clinical_decision_framework_final.csv'
-sample_csv = './sample_metadata_with_age.csv'
+clinical_csv = '../data/clinical_decision_framework_final.csv'
+sample_csv = '../data/sample_metadata_with_age.csv'
 
 if not os.path.exists(clinical_csv):
     print("❌ ERROR: clinical_decision_framework_final.csv not found")
@@ -74,9 +74,9 @@ if 'risk_group' in df.columns and 'risk_score' in df.columns:
             plt.legend(fontsize=11)
             plt.grid(True, alpha=0.3)
             plt.tight_layout()
-            plt.savefig('metrics_roc_curve.png', dpi=300, bbox_inches='tight')
+            plt.savefig('../visualizations/../visualizations/metrics_roc_curve.png', dpi=300, bbox_inches='tight')
             plt.close()
-            print(f"  ✓ Saved: metrics_roc_curve.png")
+            print(f"  ✓ Saved: ../visualizations/metrics_roc_curve.png")
             
             # Precision-Recall curve
             precision, recall, pr_thresholds = precision_recall_curve(df['is_high_risk'], df['risk_score'])
@@ -92,7 +92,7 @@ if 'risk_group' in df.columns and 'risk_score' in df.columns:
             plt.legend(fontsize=11)
             plt.grid(True, alpha=0.3)
             plt.tight_layout()
-            plt.savefig('metrics_pr_curve.png', dpi=300, bbox_inches='tight')
+            plt.savefig('../visualizations/../visualizations/metrics_pr_curve.png', dpi=300, bbox_inches='tight')
             plt.close()
             print(f"  ✓ Saved: metrics_pr_curve.png")
             
@@ -310,6 +310,6 @@ print("\n" + "="*70)
 print("✓ Metrics calculation complete!")
 print("="*70)
 print("\nGenerated files:")
-print("  ✓ metrics_roc_curve.png - ROC curve for risk stratification")
-print("  ✓ metrics_pr_curve.png - Precision-Recall curve")
+print("  ✓ ../visualizations/metrics_roc_curve.png - ROC curve for risk stratification")
+print("  ✓ ../visualizations/metrics_pr_curve.png - Precision-Recall curve")
 

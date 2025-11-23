@@ -21,7 +21,7 @@ print("="*70)
 # ============================================================================
 
 # Load sample metadata
-sample_csv = './sample_metadata_with_age.csv'
+sample_csv = '../data/sample_metadata_with_age.csv'
 if os.path.exists(sample_csv):
     metadata = pd.read_csv(sample_csv)
     print(f"✓ Loaded metadata: {len(metadata)} samples")
@@ -30,7 +30,7 @@ else:
     exit(1)
 
 # Load clinical data for age information
-clinical_csv = './clinical_decision_framework_final.csv'
+clinical_csv = '../data/clinical_decision_framework_final.csv'
 if os.path.exists(clinical_csv):
     clinical_df = pd.read_csv(clinical_csv, index_col=0)
     merged = metadata.merge(clinical_df, left_on='sample', right_index=True, how='outer')
@@ -357,7 +357,7 @@ ax5.text(0.05, 0.95, summary_text_str, ha='left', va='top', transform=ax5.transA
 fig.suptitle('Raw Datasets EDA: GEO and Zenodo Sources', 
              fontsize=16, fontweight='bold', y=0.98)
 
-plt.savefig('raw_datasets_eda.png', dpi=300, bbox_inches='tight',
+plt.savefig('../visualizations/raw_datasets_eda.png', dpi=300, bbox_inches='tight',
             facecolor='white', edgecolor='none', pad_inches=0.2)
 plt.close()
 
