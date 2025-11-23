@@ -246,10 +246,45 @@ We implemented a multi-dimensional Bayesian generative model to quantify variabi
 ### Current Limitations
 
 1. **Sample Size**: n=20 oocytes (small for robust statistical inference)
-2. **Python 3.14 Compatibility**: Some methods (scVI, full GPLVM) require fallbacks
-3. **Single Study**: Only one primary study (Zenodo) - cross-validation limited
-4. **Age Range**: Limited age range (25-35 years) - no older samples
-5. **AMH Calibration**: Requires gpflow (not available with Python 3.14)
+   - Limits statistical power for correlation analyses
+   - Prevents proper train/test split for model validation
+   - Cross-validation limited to leave-one-out (high variance)
+   - **Impact**: Some correlations (e.g., cellular age vs chronological age, r=0.27, p=0.25) do not reach statistical significance despite moderate effect sizes
+
+2. **Model Validation Gaps**: 
+   - No train/test split performance reported
+   - No cross-validation metrics for key predictions
+   - No classification performance metrics (AUC-ROC) for stage discrimination
+   - **Impact**: Cannot assess predictive performance or generalizability
+
+3. **Statistical Rigor**:
+   - Multiple testing correction not applied to gene-level correlations
+   - Confidence intervals not reported for key metrics
+   - Effect sizes (Cohen's d) not calculated for all comparisons
+   - **Impact**: P-values may be inflated, precision of estimates unknown
+
+4. **Python 3.14 Compatibility**: Some methods (scVI, full GPLVM) require fallbacks
+   - scVI unavailable → PCA fallback (no explicit batch correction)
+   - Full Bayesian GPLVM unavailable → heuristic uncertainty estimates
+   - **Impact**: Uncertainty estimates are distance-based heuristics, not true Bayesian inference
+
+5. **Single Study**: Only one primary study (Zenodo) - cross-validation limited
+   - Leave-one-study-out validation not possible
+   - Cannot assess cross-study generalizability
+   - **Impact**: Unknown whether findings generalize to other datasets/protocols
+
+6. **Age Range**: Limited age range (25-35 years) - no older samples
+   - Cannot assess performance in older reproductive ages (≥40 years)
+   - **Impact**: Clinical utility for older patients unknown
+
+7. **Literature Comparison**: No benchmarking against published methods
+   - No comparison to Zhang et al. 2020 (using same dataset)
+   - No method comparison table (Monocle, Slingshot, etc.)
+   - **Impact**: Cannot contextualize findings relative to existing work
+
+8. **AMH Calibration**: Requires gpflow (not available with Python 3.14)
+   - Cannot map cellular age to clinical AMH predictions
+   - **Impact**: Clinical translation incomplete
 
 ### Future Directions
 

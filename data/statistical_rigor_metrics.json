@@ -1,0 +1,18 @@
+{
+  "multiple_testing": {
+    "n_tests": 1,
+    "n_significant_uncorrected": 0,
+    "n_significant_fdr": 0,
+    "fdr_adjusted_pvalues": {
+      "z_vs_age": 0.2494084807152511
+    }
+  },
+  "confidence_intervals": {
+    "z_vs_age_correlation": {
+      "r": 0.2701169938991148,
+      "ci_lower": 0.10761502964516627,
+      "ci_upper": 0.5768679071125952
+    }
+  },
+  "effect_sizes": {}
+}
