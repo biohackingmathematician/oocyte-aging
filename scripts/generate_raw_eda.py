@@ -244,6 +244,84 @@ def plot_library_size_distribution(expr_df, metadata, output_dir='visualizations
     plt.close()
     print(f"Saved: {output_file}")
 
+def plot_library_size_boxplot_gv_mi(expr_df, metadata, output_dir='visualizations'):
+    """
+    FIGURE 1: Boxplot of library sizes by stage (GV vs MI only).
+    
+    Parameters
+    ----------
+    expr_df : DataFrame
+        Expression matrix
+    metadata : DataFrame
+        Sample metadata
+    output_dir : str
+        Output directory
+    """
+    # Calculate library size (total expression per sample)
+    library_sizes = expr_df.sum(axis=0)
+    
+    # Filter to GV and MI only
+    if 'stage' not in metadata.columns:
+        print("Warning: Stage information not available for FIGURE 1")
+        return
+    
+    gv_mi_mask = metadata['stage'].isin(['GV', 'MI'])
+    if gv_mi_mask.sum() == 0:
+        print("Warning: No GV or MI samples found")
+        return
+    
+    metadata_gv_mi = metadata[gv_mi_mask]
+    library_sizes_gv_mi = library_sizes[metadata_gv_mi.index]
+    
+    # Prepare data for boxplot
+    gv_samples = metadata_gv_mi[metadata_gv_mi['stage'] == 'GV'].index
+    mi_samples = metadata_gv_mi[metadata_gv_mi['stage'] == 'MI'].index
+    
+    gv_lib_sizes = library_sizes_gv_mi[gv_samples].values
+    mi_lib_sizes = library_sizes_gv_mi[mi_samples].values
+    
+    # Create figure
+    fig, ax = plt.subplots(figsize=(8, 6))
+    
+    # Create boxplot
+    bp = ax.boxplot([gv_lib_sizes, mi_lib_sizes], 
+                    labels=[f'GV\n(n={len(gv_samples)})', f'MI\n(n={len(mi_samples)})'],
+                    patch_artist=True,
+                    widths=0.6)
+    
+    # Color the boxes
+    colors = ['#F8766D', '#39B600']  # Red for GV, Green for MI
+    for patch, color in zip(bp['boxes'], colors):
+        patch.set_facecolor(color)
+        patch.set_alpha(0.7)
+        patch.set_edgecolor('black')
+        patch.set_linewidth(1.5)
+    
+    # Style the plot
+    ax.set_ylabel('Library Size (Total Expression, TPM)', fontweight='bold', fontsize=12)
+    ax.set_xlabel('Developmental Stage', fontweight='bold', fontsize=12)
+    ax.set_title('FIGURE 1: Library Size Distribution by Stage\n(GV vs MI)', 
+                fontweight='bold', fontsize=14, pad=15)
+    ax.grid(True, alpha=0.3, axis='y', linestyle='--')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    
+    # Add statistics
+    gv_mean = np.mean(gv_lib_sizes)
+    mi_mean = np.mean(mi_lib_sizes)
+    ax.text(0.5, 0.95, f'GV mean: {gv_mean:.0f}', 
+            transform=ax.transAxes, ha='center', fontsize=10, 
+            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+    ax.text(0.5, 0.88, f'MI mean: {mi_mean:.0f}', 
+            transform=ax.transAxes, ha='center', fontsize=10,
+            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+    
+    plt.tight_layout()
+    output_file = os.path.join(output_dir, 'FIGURE_1_library_size_gv_mi.png')
+    plt.savefig(output_file, bbox_inches='tight', facecolor='white', dpi=300)
+    plt.close()
+    print(f"Saved: {output_file}")
+
 def plot_mitochondrial_percentage(expr_df, metadata, output_dir='visualizations'):
     """
     Plot mitochondrial gene percentage per cell.
@@ -428,6 +506,96 @@ def plot_gene_expression_heatmap(expr_df, metadata, n_genes=50, output_dir='visu
     plt.tight_layout()
     output_file = os.path.join(output_dir, 'raw_eda_heatmap.png')
     plt.savefig(output_file, bbox_inches='tight', facecolor='white')
+    plt.close()
+    print(f"Saved: {output_file}")
+
+def plot_heatmap_top50_variable_ordered_by_stage(expr_df, metadata, n_genes=50, output_dir='visualizations'):
+    """
+    FIGURE 2: Heatmap of top 50 variable genes, cells ordered by stage.
+    
+    Parameters
+    ----------
+    expr_df : DataFrame
+        Expression matrix
+    metadata : DataFrame
+        Sample metadata
+    n_genes : int
+        Number of top variable genes (default: 50)
+    output_dir : str
+        Output directory
+    """
+    # Calculate coefficient of variation for each gene
+    gene_cv = expr_df.std(axis=1) / (expr_df.mean(axis=1) + 1e-8)
+    top_var_genes = gene_cv.nlargest(n_genes).index
+    
+    # Subset expression matrix
+    heatmap_data = expr_df.loc[top_var_genes]
+    
+    # Order samples by stage
+    if 'stage' not in metadata.columns:
+        print("Warning: Stage information not available for FIGURE 2")
+        return
+    
+    # Sort by stage order: GV first, then MI, then MII
+    stage_order = {'GV': 0, 'MI': 1, 'MII': 2}
+    metadata_sorted = metadata.sort_values('stage', key=lambda x: x.map(stage_order))
+    heatmap_data = heatmap_data[metadata_sorted.index]
+    
+    # Create color mapping for stage annotation
+    stage_colors = {'GV': '#F8766D', 'MI': '#39B600', 'MII': '#00B0F6'}
+    col_colors_list = [stage_colors.get(stage, 'gray') for stage in metadata_sorted['stage']]
+    
+    # Create figure with annotation bar
+    fig = plt.figure(figsize=(14, 10))
+    gs = fig.add_gridspec(2, 1, height_ratios=[0.05, 0.95], hspace=0.1)
+    
+    # Stage annotation bar
+    ax_ann = fig.add_subplot(gs[0])
+    for i, color in enumerate(col_colors_list):
+        ax_ann.barh(0, 1, left=i, color=color, edgecolor='white', linewidth=0.5)
+    ax_ann.set_xlim(0, len(col_colors_list))
+    ax_ann.set_ylim(-0.5, 0.5)
+    ax_ann.set_yticks([])
+    ax_ann.set_xticks([])
+    ax_ann.spines['top'].set_visible(False)
+    ax_ann.spines['right'].set_visible(False)
+    ax_ann.spines['bottom'].set_visible(False)
+    ax_ann.spines['left'].set_visible(False)
+    ax_ann.set_title('Stage', fontweight='bold', fontsize=10, pad=5)
+    
+    # Add legend for stages
+    from matplotlib.patches import Patch
+    legend_elements = [Patch(facecolor=color, label=stage) 
+                      for stage, color in stage_colors.items() 
+                      if stage in metadata_sorted['stage'].values]
+    ax_ann.legend(handles=legend_elements, loc='upper right', ncol=3, fontsize=9)
+    
+    # Main heatmap
+    ax = fig.add_subplot(gs[1])
+    
+    # Log transform for visualization
+    heatmap_data_log = np.log1p(heatmap_data)
+    
+    sns.heatmap(heatmap_data_log, 
+                cmap='viridis',
+                cbar_kws={'label': 'Log(Expression + 1)', 'shrink': 0.8},
+                xticklabels=[s[:25] for s in heatmap_data.columns],
+                yticklabels=[str(g)[:40] for g in top_var_genes],
+                ax=ax,
+                linewidths=0.3,
+                linecolor='gray',
+                cbar=True)
+    
+    ax.set_xlabel('Samples (Ordered by Stage: GV → MI → MII)', fontweight='bold', fontsize=12)
+    ax.set_ylabel('Top 50 Most Variable Genes', fontweight='bold', fontsize=12)
+    ax.set_title('FIGURE 2: Gene Expression Heatmap\n(Top 50 Variable Genes, Cells Ordered by Stage)', 
+                fontweight='bold', fontsize=14, pad=15)
+    plt.xticks(rotation=45, ha='right', fontsize=8)
+    plt.yticks(rotation=0, fontsize=7)
+    
+    plt.tight_layout()
+    output_file = os.path.join(output_dir, 'FIGURE_2_heatmap_top50_variable_by_stage.png')
+    plt.savefig(output_file, bbox_inches='tight', facecolor='white', dpi=300)
     plt.close()
     print(f"Saved: {output_file}")
 
@@ -617,9 +785,24 @@ def main():
     except Exception as e:
         print(f"   ERROR: {e}")
     
+    print("\n8. Generating FIGURE 1: Library size boxplot (GV vs MI)...")
+    try:
+        plot_library_size_boxplot_gv_mi(expr_df, metadata, output_dir=output_dir)
+    except Exception as e:
+        print(f"   ERROR: {e}")
+    
+    print("\n9. Generating FIGURE 2: Heatmap top 50 variable genes ordered by stage...")
+    try:
+        plot_heatmap_top50_variable_ordered_by_stage(expr_df, metadata, n_genes=50, output_dir=output_dir)
+    except Exception as e:
+        print(f"   ERROR: {e}")
+    
     print("\n" + "="*70)
     print("Raw EDA visualization generation complete!")
     print(f"All plots saved to: {output_dir}/")
+    print("\nKey Figures:")
+    print("  - FIGURE_1_library_size_gv_mi.png")
+    print("  - FIGURE_2_heatmap_top50_variable_by_stage.png")
     print("="*70)
 
 if __name__ == '__main__':
