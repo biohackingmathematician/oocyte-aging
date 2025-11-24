@@ -1,0 +1,104 @@
+{
+  "our_genes": {
+    "decreasing": [
+      "UBE2F",
+      "VDAC3",
+      "DUT",
+      "PIGU",
+      "SERHL2",
+      "TUBA4B"
+    ],
+    "increasing": [
+      "TMSB4X",
+      "PCNA",
+      "HNRNPA1",
+      "MAGOH",
+      "PSMA2"
+    ],
+    "all": [
+      "UBE2F",
+      "VDAC3",
+      "DUT",
+      "PIGU",
+      "SERHL2",
+      "TUBA4B",
+      "TMSB4X",
+      "PCNA",
+      "HNRNPA1",
+      "MAGOH",
+      "PSMA2"
+    ]
+  },
+  "zhang_2020_overlap": {
+    "overlap_genes": [
+      "UBE2F",
+      "PSMA2",
+      "DUT",
+      "VDAC3"
+    ],
+    "n_overlap": 4,
+    "n_our": 11,
+    "n_lit": 21,
+    "overlap_pct_our": 36.36363636363637,
+    "overlap_pct_lit": 19.047619047619047
+  },
+  "other_age_overlap": {
+    "overlap_genes": [],
+    "n_overlap": 0,
+    "n_our": 11,
+    "n_lit": 16,
+    "overlap_pct_our": 0.0,
+    "overlap_pct_lit": 0.0
+  },
+  "mitochondrial_overlap": {
+    "overlap_genes": [
+      "VDAC3"
+    ],
+    "n_overlap": 1,
+    "n_our": 11,
+    "n_lit": 12,
+    "overlap_pct_our": 9.090909090909092,
+    "overlap_pct_lit": 8.333333333333332
+  },
+  "cell_cycle_overlap": {
+    "overlap_genes": [
+      "DUT",
+      "PCNA"
+    ],
+    "n_overlap": 2,
+    "n_our": 11,
+    "n_lit": 12,
+    "overlap_pct_our": 18.181818181818183,
+    "overlap_pct_lit": 16.666666666666664
+  },
+  "gene_categories": {
+    "proteasome": [
+      "PSMA2"
+    ],
+    "ubiquitination": [
+      "UBE2F",
+      "TUBA4B"
+    ],
+    "mitochondrial": [
+      "VDAC3"
+    ],
+    "cell_cycle": [
+      "DUT",
+      "PCNA"
+    ],
+    "rna_processing": [
+      "HNRNPA1",
+      "MAGOH"
+    ],
+    "other": [
+      "PIGU",
+      "SERHL2",
+      "TMSB4X"
+    ]
+  },
+  "summary": {
+    "total_literature_genes": 58,
+    "total_overlap": 5,
+    "overlap_percentage": 45.45454545454545
+  }
+}
