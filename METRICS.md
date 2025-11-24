@@ -271,6 +271,82 @@ This document describes the comprehensive validation metrics used to evaluate th
 
 ---
 
+### Category 6: Model Validation
+
+#### 6.1 Train/Test Split Performance
+
+**Purpose**: Evaluate model performance on held-out test data to assess generalizability.
+
+**Metrics Used**:
+
+1. **Test Set Correlation**
+   - **Definition**: Pearson correlation between predicted and observed values on test set
+   - **Our Result**: r = 0.432, p = 0.393 (age prediction from cellular age Z)
+   - **Interpretation**: Moderate correlation on test set, but not statistically significant (likely due to small test set size, n=6)
+
+2. **Mean Absolute Error (MAE)**
+   - **Definition**: Average absolute difference between predicted and observed values
+   - **Our Result**: 5.66 years (age prediction)
+   - **Interpretation**: Prediction error is substantial, reflecting biological variation and model limitations
+
+3. **R² (Coefficient of Determination)**
+   - **Definition**: Proportion of variance explained by the model
+   - **Our Result**: -1.43 (negative indicates model performs worse than baseline)
+   - **Interpretation**: Model does not improve upon simple mean prediction, likely due to small sample size and high biological variability
+
+#### 6.2 Cross-Validation Performance
+
+**Purpose**: Assess model stability and generalizability across different data splits.
+
+**Metrics Used**:
+
+1. **CV Correlation (Mean ± SD)**
+   - **Definition**: Mean correlation across cross-validation folds
+   - **Our Result**: r = 0.251 ± 0.681 (5-fold CV for age prediction)
+   - **Interpretation**: High variance (SD = 0.681) indicates instability across folds, consistent with small sample size
+
+2. **CV Consistency (Coefficient of Variation)**
+   - **Definition**: Ratio of standard deviation to mean correlation
+   - **Our Result**: 2.72
+   - **Interpretation**: Very high variability (CV > 1.0 indicates high instability), suggesting model performance is highly dependent on specific data splits
+
+3. **CV MAE (Mean ± SD)**
+   - **Our Result**: 5.21 ± 1.27 years
+   - **Interpretation**: Consistent prediction error across folds, with moderate variability
+
+**Rationale**: Cross-validation provides a more robust assessment of model performance than single train/test split, especially important for small datasets.
+
+#### 6.3 Classification Performance
+
+**Purpose**: Evaluate ability to classify oocytes into developmental stages (GV vs MI).
+
+**Metrics Used**:
+
+1. **AUC-ROC for Stage Classification**
+   - **Our Result**: 0.786 (using cellular age Z)
+   - **Target**: > 0.85 for strong performance, > 0.70 for acceptable
+   - **Interpretation**: Moderate discriminative ability, above acceptable threshold but below strong performance target
+
+2. **Sensitivity (True Positive Rate)**
+   - **Our Result**: 1.000 (100% of GV oocytes correctly identified)
+   - **Interpretation**: Perfect sensitivity indicates no false negatives for GV classification
+
+3. **Specificity (True Negative Rate)**
+   - **Our Result**: 0.071 (only 7.1% of MI oocytes correctly identified)
+   - **Interpretation**: Very low specificity indicates many false positives (MI oocytes misclassified as GV)
+
+4. **Positive Predictive Value (PPV)**
+   - **Our Result**: 0.316
+   - **Interpretation**: Only 31.6% of predicted GV oocytes are truly GV, indicating high false positive rate
+
+5. **Negative Predictive Value (NPV)**
+   - **Our Result**: 1.000
+   - **Interpretation**: Perfect NPV indicates all predicted MI oocytes are truly MI
+
+**Rationale**: Classification metrics directly assess the model's ability to distinguish developmental stages, which is critical for clinical decision-making.
+
+---
+
 ## Summary of Key Results
 
 ### Model Performance Summary
@@ -284,6 +360,9 @@ This document describes the comprehensive validation metrics used to evaluate th
 | **Correlation** | Z vs Health Score | r = -0.837 | | Strong correlation |
 | **Uncertainty** | 95% Coverage | 1.000 | 0.90-0.95 | Well-calibrated |
 | **Trajectory** | Kendall's τ | 0.380 | | Significant ordering |
+| **Validation** | Test Set Correlation | 0.432 | > 0.70 | Moderate, not significant |
+| **Validation** | CV Correlation | 0.251 ± 0.681 | Stable | High variance |
+| **Classification** | AUC-ROC (GV vs MI) | 0.786 | > 0.85 | Moderate performance |
 
 ### Interpretation
 
