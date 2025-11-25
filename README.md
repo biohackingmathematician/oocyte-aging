@@ -28,6 +28,10 @@ This uses a multi-dimensional Bayesian generative model to quantify variability 
 ├── RESULTS.md                 # Detailed results summary
 ├── METRICS.md                 # Validation metrics and performance evaluation
 ├── LICENSE                    # MIT License
+├── environment.yml            # Conda environment file (for scVI support)
+├── requirements.txt           # Python requirements (full installation)
+├── requirements-minimal.txt   # Minimal requirements (no scVI/GPLVM)
+├── setup_environment.sh       # Automated environment setup script
 │
 ├── docs/                      # Documentation
 │   ├── INSTALLATION_GUIDE.md
@@ -103,23 +107,98 @@ pip install pandas numpy matplotlib scipy scikit-learn GEOparse
 
 ### Installation Instructions
 
-#### Option 1: Using Conda (Recommended)
+#### Option 1: Automated Setup Script (Easiest)
+
+```bash
+# Run the setup script
+./setup_environment.sh
+
+# Activate the environment
+conda activate oocyte_analysis
+
+# Verify scVI installation
+python -c "import scvi; print('scVI version:', scvi.__version__)"
+```
+
+#### Option 2: Using Conda with environment.yml (Recommended for scVI)
+
+```bash
+# Create environment from file (includes Python 3.11 and all dependencies)
+conda env create -f environment.yml
+
+# Activate environment
+conda activate oocyte_analysis
+
+# Verify scVI installation
+python -c "import scvi; print('scVI version:', scvi.__version__)"
+```
+
+#### Option 3: Using Conda Manually
 
 ```bash
 # Create environment with Python 3.11
 conda create -n oocyte_analysis python=3.11
 conda activate oocyte_analysis
 
-# Install all packages
-pip install scvi-tools gpflow tensorflow scanpy anndata \
-            pandas numpy matplotlib scipy scikit-learn GEOparse
+# Install from requirements.txt
+pip install -r requirements.txt
 ```
 
-#### Option 2: Using pip (Current Setup)
+#### Option 4: Using pip with requirements.txt
 
 ```bash
-# For Python 3.14 (with limitations)
-pip install pandas numpy matplotlib scipy scikit-learn GEOparse
+# Requires Python 3.10-3.13 for full functionality
+# Create virtual environment first
+python3.11 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install all packages
+pip install -r requirements.txt
+```
+
+### Verifying Installation
+
+After setting up the environment, verify that scVI and other key packages are installed:
+
+```bash
+conda activate oocyte_analysis
+
+# Check scVI
+python -c "import scvi; print('scVI version:', scvi.__version__)"
+
+# Check scanpy
+python -c "import scanpy as sc; print('scanpy version:', sc.__version__)"
+
+# Check tensorflow
+python -c "import tensorflow as tf; print('TensorFlow version:', tf.__version__)"
+
+# Check gpflow
+python -c "import gpflow; print('GPflow version:', gpflow.__version__)"
+```
+
+### Troubleshooting Installation
+
+#### Issue: "ImportError: cannot import name 'X' from 'scvi'"
+**Solution**: Ensure you're using Python 3.10-3.13. Check with `python --version`. If using Python 3.14, use the minimal requirements or switch to the conda environment.
+
+#### Issue: "No module named 'tensorflow'"
+**Solution**: TensorFlow may have compatibility issues. Try installing specific version:
+```bash
+pip install tensorflow==2.13.0
+```
+
+#### Issue: Conda environment creation fails
+**Solution**: Update conda and try again:
+```bash
+conda update conda
+conda env create -f environment.yml
+```
+
+#### Option 5: Minimal Installation (Python 3.14, without scVI/GPLVM)
+
+```bash
+# For Python 3.14 with fallback methods only
+pip install -r requirements-minimal.txt
 
 # Note: scvi-tools, tensorflow, gpflow will not install on Python 3.14
 # The notebook will use fallback methods automatically
