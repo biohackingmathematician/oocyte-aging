@@ -502,7 +502,7 @@ with open(metrics_file, 'w') as f:
 print(f"Saved metrics to: {metrics_file}")
 
 # Print summary
-print("\nMetrics Calculation Complete")
+print("\nMetrics calculation complete.")
 print("\nCalculated Metrics:")
 print(f"Latent Space Quality: {len(metrics_results.get('latent_space', {}))} metrics")
 print(f"Correlations: {len(metrics_results.get('correlations', {}))} metrics")

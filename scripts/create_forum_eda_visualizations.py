@@ -306,7 +306,7 @@ print("GV: n={len(gv_scores)}, Mean={np.mean(gv_scores):.2f}, Median={np.median(
 print("MI: n={len(mi_scores)}, Mean={np.mean(mi_scores):.2f}, Median={np.median(mi_scores):.2f}, SD={np.std(mi_scores):.2f}")
 
 print("")
-print(" Forum EDA Visualizations Created!")
+print("Forum EDA visualizations generated.")
 print("")
 print("\nGenerated files:")
 print(" forum_umap_pca_by_stage.png")

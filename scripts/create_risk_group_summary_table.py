@@ -13,12 +13,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 clinical_csv = os.path.join(DATA_DIR, 'clinical_decision_framework_final.csv')
 
-print("="*60)
-print("GENERATING OOCYTE RISK GROUP SUMMARY TABLE")
-print("="*60)
-
 # Load data
-print("\nLoading data...")
+print("Loading data...")
 df = pd.read_csv(clinical_csv, index_col=0)
 print(f"Loaded {len(df)} samples")
 
@@ -44,13 +40,13 @@ if 'health_score' not in df.columns:
                 if 'oocyte_health_score' in adata.obs.columns:
                     health_scores = adata.obs['oocyte_health_score']
                     df = df.merge(health_scores, left_index=True, right_index=True, how='left')
-                    print(f"  ✓ Loaded health scores from h5ad")
+                    print("Loaded health scores from h5ad")
                 elif 'health_score' in adata.obs.columns:
                     health_scores = adata.obs['health_score']
                     df = df.merge(health_scores, left_index=True, right_index=True, how='left')
-                    print(f"  ✓ Loaded health scores from h5ad")
+                    print("Loaded health scores from h5ad")
             except Exception as e:
-                print(f"  ✗ Could not load from h5ad: {e}")
+                print(f"Could not load from h5ad: {e}")
     
     # If still no health score, we'll compute approximate ranges from risk_score
     if 'health_score' not in df.columns and 'oocyte_health_score' not in df.columns:
@@ -242,11 +238,8 @@ column_order = ['Risk Group', 'n', 'Cellular Age (z)', 'Health Score', 'Uncertai
 summary_df = summary_df[column_order]
 
 # Print table
-print("\n" + "="*100)
-print("Table 1. Oocyte Risk Group Summary (Model Outputs)")
-print("="*100)
+print("\nTable 1. Oocyte Risk Group Summary (Model Outputs)")
 print(summary_df.to_string(index=False))
-print("="*100)
 
 # Save to markdown format
 output_md = os.path.join(BASE_DIR, 'RISK_GROUP_SUMMARY_TABLE.md')
@@ -266,7 +259,7 @@ with open(output_md, 'w') as f:
     f.write("\n**Key Interpretation**: The risk stratification reveals three distinct oocyte quality trajectories, with 65% showing resilient aging patterns (low risk), 30% in transition (moderate risk), and 5% requiring urgent intervention (high risk). Higher uncertainty values (scaled by 10³) in high-risk cells reflect increased biological variability and decreased prediction confidence, consistent with accelerated aging phenotypes.\n\n")
     f.write("\n\n")
 
-print(f"\n✓ Saved markdown table to: {output_md}")
+print(f"\nSaved markdown table to: {output_md}")
 
 # Also create LaTeX table format
 output_tex = os.path.join(BASE_DIR, 'RISK_GROUP_SUMMARY_TABLE.tex')
@@ -285,7 +278,7 @@ with open(output_tex, 'w') as f:
     f.write("\\end{tabular}\n")
     f.write("\\end{table}\n")
 
-print(f"✓ Saved LaTeX table to: {output_tex}")
+print(f"Saved LaTeX table to: {output_tex}")
 
 # Print summary statistics
 print("\n" + "="*60)
@@ -300,7 +293,5 @@ for risk_group in sorted(risk_groups):
         print(f"  Health Score: {format_range(group_df['health_score'].values, 1)}")
     print(f"  Uncertainty: {format_mean_std(group_df['cellular_age_uncertainty'].values, 0)}")
 
-print("\n" + "="*60)
-print("DONE")
-print("="*60)
+print("\nTable generation complete.")
 

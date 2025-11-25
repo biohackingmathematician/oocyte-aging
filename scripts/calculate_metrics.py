@@ -291,7 +291,7 @@ for category, metrics in metrics_summary.items():
         print("{metric}: {value}")
 
 print("")
-print(" Metrics calculation complete!")
+print("Metrics calculation complete.")
 print("")
 print("\nGenerated files:")
 print(" ../visualizations/metrics_roc_curve.png - ROC curve for risk stratification")

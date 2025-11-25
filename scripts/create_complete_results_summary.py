@@ -17,7 +17,7 @@ from scipy import stats
 import os
 
 print("")
-print("COMPLETE RESULTS SUMMARY - OOCYTE AGING ANALYSIS")
+print("Generating complete results summary...")
 print("")
 
 # Load data
@@ -50,7 +50,7 @@ if 'oocyte_health_score' not in merged.columns and 'health_score' not in merged.
         print(" Computed health score from cellular_age_z")
 
 # Create comprehensive summary figure
-print("\nCreating complete results summary figure...")
+print("Creating complete results summary figure...")
 
 fig = plt.figure(figsize=(20, 12))
 gs = GridSpec(3, 4, figure=fig, hspace=0.35, wspace=0.4, left=0.06, right=0.98, top=0.96, bottom=0.05)
@@ -376,9 +376,8 @@ plt.savefig('../visualizations/complete_results_summary.png', dpi=300, bbox_inch
             facecolor='white', edgecolor='none', pad_inches=0.2)
 plt.close()
 
-print(" Saved: complete_results_summary.png")
-print("")
-print(" Complete Results Summary Generated!")
+print("Saved: complete_results_summary.png")
+print("Complete results summary generated.")
 print("")
 print("\nAll panels populated with available data.")
 print("Key findings from mid-progress report:")

@@ -276,7 +276,7 @@ for i, (vals, label) in enumerate(zip(values_by_stage, labels)):
     print("Range = [{np.min(vals):.2f}, {np.max(vals):.2f}]")
 
 print("")
-print(" Visualizations generated from CSV data!")
+print("Visualizations generated from CSV data.")
 print("")
 print("\nGenerated files:")
 if os.path.exists('forum_stage_overview.png'):

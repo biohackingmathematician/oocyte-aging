@@ -25,9 +25,7 @@ clinical_csv = os.path.join(DATA_DIR, 'clinical_decision_framework_final.csv')
 # Create visualizations directory if needed
 os.makedirs(VIZ_DIR, exist_ok=True)
 
-print("="*60)
-print("GENERATING PRESENTATION GRAPHS")
-print("="*60)
+print("Generating presentation graphs...")
 
 # Try to load pathway scores from h5ad if available
 pathway_scores_df = None
@@ -36,7 +34,7 @@ h5ad_paths = [
     os.path.join(BASE_DIR, 'adata_with_gene_symbols.h5ad'),
 ]
 
-print("\n[0/2] Attempting to load pathway scores from h5ad...")
+print("\nAttempting to load pathway scores from h5ad...")
 for h5ad_path in h5ad_paths:
     if os.path.exists(h5ad_path):
         try:
@@ -47,29 +45,23 @@ for h5ad_path in h5ad_paths:
             if len(pathway_cols) > 0:
                 pathway_scores_df = adata.obs[pathway_cols].copy()
                 pathway_scores_df.index = adata.obs.index
-                print(f"  ✓ Loaded pathway scores from {os.path.basename(h5ad_path)}")
-                print(f"    Found pathways: {[col.replace('score_', '') for col in pathway_cols]}")
+                print(f"Loaded pathway scores from {os.path.basename(h5ad_path)}")
+                print(f"Found pathways: {[col.replace('score_', '') for col in pathway_cols]}")
                 break
         except Exception as e:
-            print(f"  ✗ Could not load {os.path.basename(h5ad_path)}: {e}")
+            print(f"Could not load {os.path.basename(h5ad_path)}: {e}")
             continue
 
 if pathway_scores_df is None:
-    print("  ! Pathway scores not found in h5ad. Will generate from risk scores.")
+    print("Pathway scores not found in h5ad. Generating from risk scores.")
 
 # Load data
-print("\n[1/2] Loading data...")
+print("\nLoading data...")
 df = pd.read_csv(clinical_csv, index_col=0)
 print(f"Loaded {len(df)} samples")
 
-# Check available columns
-print(f"Available columns: {list(df.columns)}")
-
-# ============================================================================
-# GRAPH 1: Pathway-Specific Breakdown Heatmap
-# ============================================================================
-
-print("\n[1/2] Creating Pathway-Specific Breakdown Heatmap...")
+# Graph 1: Pathway-Specific Breakdown Heatmap
+print("\nCreating Pathway-Specific Breakdown Heatmap...")
 
 # Get risk groups and sort
 df_with_risk = df.copy()
@@ -259,19 +251,16 @@ plt.tight_layout()
 output_path1 = os.path.join(VIZ_DIR, 'pathway_breakdown_heatmap.png')
 plt.savefig(output_path1, dpi=300, bbox_inches='tight', facecolor='white')
 plt.close()
-print(f"  ✓ Saved: pathway_breakdown_heatmap.png")
+print(f"Saved: pathway_breakdown_heatmap.png")
 
-# ============================================================================
-# GRAPH 2: Cellular Age vs. Chronological Age Scatter Plot
-# ============================================================================
-
-print("\n[2/2] Creating Cellular Age vs. Chronological Age Scatter Plot...")
+# Graph 2: Cellular Age vs. Chronological Age Scatter Plot
+print("\nCreating Cellular Age vs. Chronological Age Scatter Plot...")
 
 # Filter data to have valid age and cellular_age_z
 df_plot = df[(df['age'].notna()) & (df['cellular_age_z'].notna())].copy()
 
 if len(df_plot) == 0:
-    print("  ✗ Error: No data with both age and cellular_age_z")
+    print("Error: No data with both age and cellular_age_z")
 else:
     print(f"  Plotting {len(df_plot)} samples")
     
@@ -335,11 +324,9 @@ else:
     output_path2 = os.path.join(VIZ_DIR, 'cellular_age_vs_chronological_age.png')
     plt.savefig(output_path2, dpi=300, bbox_inches='tight', facecolor='white')
     plt.close()
-    print(f"  ✓ Saved: cellular_age_vs_chronological_age.png")
+    print(f"Saved: cellular_age_vs_chronological_age.png")
 
-print("\n" + "="*60)
-print("VISUALIZATION GENERATION COMPLETE")
-print("="*60)
+print("\nVisualization generation complete.")
 print(f"\nGenerated files:")
 print(f"  1. {output_path1}")
 if len(df_plot) > 0:

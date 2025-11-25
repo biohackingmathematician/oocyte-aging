@@ -745,7 +745,7 @@ def main():
         print(f"   Loaded: {expr_df.shape[0]} genes × {expr_df.shape[1]} samples")
         print(f"   Expression range: {expr_df.min().min():.2f} - {expr_df.max().max():.2f}")
     except Exception as e:
-        print(f"   ERROR: Could not load data: {e}")
+        print(f"Error: Could not load data: {e}")
         return
     
     # Generate plots
@@ -753,52 +753,51 @@ def main():
     try:
         plot_library_size_distribution(expr_df, metadata, output_dir)
     except Exception as e:
-        print(f"   ERROR: {e}")
+        print(f"Error: {e}")
     
     print("\n3. Generating mitochondrial gene percentage...")
     try:
         plot_mitochondrial_percentage(expr_df, metadata, output_dir)
     except Exception as e:
-        print(f"   ERROR: {e}")
+        print(f"Error: {e}")
     
     print("\n4. Generating top genes by stage...")
     try:
         plot_top_genes_by_stage(expr_df, metadata, n_top=20, output_dir=output_dir)
     except Exception as e:
-        print(f"   ERROR: {e}")
+        print(f"Error: {e}")
     
     print("\n5. Generating gene expression heatmap...")
     try:
         plot_gene_expression_heatmap(expr_df, metadata, n_genes=50, output_dir=output_dir)
     except Exception as e:
-        print(f"   ERROR: {e}")
+        print(f"Error: {e}")
     
     print("\n6. Generating gene correlation matrix...")
     try:
         plot_gene_correlation_matrix(expr_df, n_genes=30, output_dir=output_dir)
     except Exception as e:
-        print(f"   ERROR: {e}")
+        print(f"Error: {e}")
     
     print("\n7. Generating raw counts boxplots...")
     try:
         plot_raw_counts_boxplots(expr_df, metadata, n_genes=20, output_dir=output_dir)
     except Exception as e:
-        print(f"   ERROR: {e}")
+        print(f"Error: {e}")
     
     print("\n8. Generating FIGURE 1: Library size boxplot (GV vs MI)...")
     try:
         plot_library_size_boxplot_gv_mi(expr_df, metadata, output_dir=output_dir)
     except Exception as e:
-        print(f"   ERROR: {e}")
+        print(f"Error: {e}")
     
     print("\n9. Generating FIGURE 2: Heatmap top 50 variable genes ordered by stage...")
     try:
         plot_heatmap_top50_variable_ordered_by_stage(expr_df, metadata, n_genes=50, output_dir=output_dir)
     except Exception as e:
-        print(f"   ERROR: {e}")
+        print(f"Error: {e}")
     
-    print("\n" + "="*70)
-    print("Raw EDA visualization generation complete!")
+    print("\nRaw EDA visualization generation complete.")
     print(f"All plots saved to: {output_dir}/")
     print("\nKey Figures:")
     print("  - FIGURE_1_library_size_gv_mi.png")

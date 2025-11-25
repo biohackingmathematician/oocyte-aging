@@ -360,7 +360,7 @@ def create_placeholder_heatmap():
     print(" Saved: forum_raw_expression_heatmap.png (placeholder)")
 
 print("")
-print(" Forum Raw EDA Visualizations Complete!")
+print("Forum Raw EDA visualizations generated.")
 print("")
 print("\nGenerated files:")
 print(" forum_raw_sample_composition.png - Sample composition (stage + age)")

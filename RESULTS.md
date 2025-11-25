@@ -101,13 +101,13 @@ We implemented a multi-dimensional Bayesian generative model to quantify variabi
 
 #### Table 1. Oocyte Risk Group Summary (Model Outputs)
 
-This table summarizes **EVERYTHING your model outputs**:
+This table summarizes all model outputs:
 - cellular age
 - uncertainty  
 - health score
 - clinical risk group
 
-**PERFECT for ADS** because it is interpretable, biological, and summarizes your findings without repeating performance metrics.
+The table provides an interpretable, biological summary of findings without repeating performance metrics.
 
 | Risk Group | n | Cellular Age (z) | Health Score | Uncertainty (σ) | % of Cells | Biological Interpretation |
 |------------|---|------------------|--------------|-----------------|------------|---------------------------|

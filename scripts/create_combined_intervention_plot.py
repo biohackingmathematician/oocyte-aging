@@ -271,6 +271,6 @@ print(f"\nX-axis ({x_label}):")
 print("Range: [{x_data.min():.3f}, {x_data.max():.3f}]")
 
 print(f"\n{'='*70}")
-print(" Combined intervention plot complete!")
+print("Combined intervention plot generated.")
 print(f"{'='*70}")
 
