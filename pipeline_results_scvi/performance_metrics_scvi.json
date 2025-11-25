@@ -1,0 +1,53 @@
+{
+  "trajectory_stage_correlation": {
+    "spearman_r": 0.4730472703803727,
+    "p_value": 0.035159376983436255,
+    "n_samples": 20
+  },
+  "health_score_validation": {
+    "gv_mean": 91.14600953457773,
+    "mi_mean": 69.48083904937428,
+    "fold_change": 1.311815038241087,
+    "mann_whitney_u": 72.0,
+    "p_value": 0.005856553147574819
+  },
+  "risk_group_separation": {
+    "low_risk_mean": 0.273817777633667,
+    "high_risk_mean": 0.8633177876472473,
+    "effect_size": 0.5895000100135803,
+    "mann_whitney_u": 0.0,
+    "p_value": 0.0005827505827505828
+  },
+  "pathway_statistics": {
+    "Cell_Cycle": {
+      "mean": 0.7657721083776683,
+      "std": 0.20631898974663695,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "Mitochondrial": {
+      "mean": 0.5507616421052384,
+      "std": 0.24167303198711915,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "DNA_Repair": {
+      "mean": 0.7194895050603433,
+      "std": 0.21144502853926547,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "Oxidative_Stress": {
+      "mean": 0.5445588020741157,
+      "std": 0.23371782067073896,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "Apoptosis": {
+      "mean": 0.5377911814271734,
+      "std": 0.2538392460431266,
+      "min": 0.0,
+      "max": 1.0
+    }
+  }
+}
