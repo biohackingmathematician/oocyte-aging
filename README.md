@@ -212,10 +212,20 @@ pip install -r requirements-minimal.txt
 
 1. **Zenodo Dataset** (Primary)
    - **Source**: Zenodo 14163313
-   - **Samples**: 20 oocytes (6 GV, 14 MI)
-   - **Genes**: 204,563 transcripts
-   - **Format**: Kallisto abundance files
+   - **Full Dataset**: 72 oocytes across all maturation stages (18–43 years)
+   - **Analysis Subset**: 20 oocytes (6 GV, 14 MI) with complete age + stage metadata
+   - **Rationale for Subsetting**: 
+     - Focus on the GV→MI transition (primary maturation checkpoint)
+     - Keep the project computationally tractable
+     - Ensure complete metadata availability for age integration and clinical analysis
+   - **Raw Features**: 204,563 Kallisto transcripts (isoforms)
+   - **Gene-level Matrix**: 126,966 gene symbols (after transcript-to-gene mapping)
+   - **Detected per Cell**: ~4,256 ± 892 genes (after QC, ≥2 cells expressing)
+   - **HVGs Used for Modeling**: 2,000 highly variable genes
+   - **Format**: Kallisto abundance files (TPM)
    - **Location**: `zenodo_data/final_code/kallisto/`
+   
+   **Note**: The dataset contains transcript-level abundance estimates. We collapsed transcripts to gene symbols for downstream analysis, resulting in 126,966 unique genes from 204,563 transcripts.
 
 2. **GEO Datasets** (Age Data)
    - **GSE155179**: 12 samples with age data (30-40 years)

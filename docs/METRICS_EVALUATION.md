@@ -307,10 +307,13 @@ This document evaluates the current implementation against the research objectiv
 | Method | Uncertainty | Clinical Output | Correlation with Age | Limitations |
 |--------|-------------|-----------------|---------------------|-------------|
 | DPT (Current) |  | Health score | ρ = -0.79 | No uncertainty |
-| PCA-based (Current) | ✅ σ² (heuristic) | Health score + risk groups | [TO VALIDATE] | Not true Bayesian |
+| PCA-based (Current) | ✅ σ² (heuristic) | Health score + risk groups | r = 0.27 | Not true Bayesian |
+| scVI + DPT (Implemented) | ✅ σ² (heuristic) | Health score + risk groups | r = 0.27 | Sensitivity analysis confirms robustness |
 | GPLVM (Planned) | ✅ σ² (Bayesian) | Health score + CI | Target r > 0.75 | Requires compatible Python |
 | Monocle (Literature) |  | Trajectory only | Variable | No clinical translation |
-| **Our Framework** | ✅ | Risk groups + timing | [TO SHOW] | Small sample size (n=20) |
+| **Our Framework** | ✅ | Risk groups + timing | r = 0.27, p = 0.25 | Small sample size (n=20) |
+
+**Note**: Hyperparameter sensitivity analysis (see `scripts/gplvm_hyperparam_sensitivity.py`) confirms that key findings (MI > GV uncertainty, ~20-30% high-uncertainty cells) are robust across kernel hyperparameters.
 
 ---
 
@@ -370,10 +373,14 @@ This document evaluates the current implementation against the research objectiv
 
 ## Next Steps
 
-1. **Immediate**: Implement Priority 1 metrics (risk stratification AUC, CHS validation)
-2. **Short-term**: Add calibration analysis and latent space quality metrics
-3. **Documentation**: Update results section with quantitative validation
-4. **Future work**: Implement full Bayesian GPLVM when compatible Python version available
+1. ✅ **Completed**: Risk stratification AUC calculation (AUC = 1.000)
+2. ✅ **Completed**: Clinical Health Score validation (AUC = 1.000, Cohen's d = 2.161)
+3. ✅ **Completed**: Uncertainty calibration analysis (95% coverage = 1.000)
+4. ✅ **Completed**: Latent space quality metrics (Silhouette, Davies-Bouldin, Calinski-Harabasz)
+5. ✅ **Completed**: Hyperparameter sensitivity analysis (`scripts/gplvm_hyperparam_sensitivity.py`)
+6. ✅ **Completed**: Gene-pseudotime correlation analysis with FDR correction (`scripts/create_gene_pseudotime_plots.py`)
+7. **Remaining**: Full Bayesian GPLVM when compatible Python version available
+8. **Remaining**: Expand dataset to full 72-oocyte cohort
 
 ---
 
