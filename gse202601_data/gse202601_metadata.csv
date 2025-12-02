@@ -1,0 +1,17 @@
+gsm_id,title,source,characteristics,age_group,cell_type
+GSM6125533,Human_ovary1_snRNA-seq,ovary,"['age: 23', 'gender: female', 'tissue: ovary']",age: 23,tissue: ovary
+GSM6125534,Human_ovary2_snRNA-seq,ovary,"['age: 27', 'gender: female', 'tissue: ovary']",age: 27,tissue: ovary
+GSM6125535,Human_ovary3_snRNA-seq,ovary,"['age: 28', 'gender: female', 'tissue: ovary']",age: 28,tissue: ovary
+GSM6125536,Human_ovary4_snRNA-seq,ovary,"['age: 29', 'gender: female', 'tissue: ovary']",age: 29,tissue: ovary
+GSM6125537,Human_ovary5_snRNA-seq,ovary,"['age: 49', 'gender: female', 'tissue: ovary']",age: 49,tissue: ovary
+GSM6125538,Human_ovary6_snRNA-seq,ovary,"['age: 51', 'gender: female', 'tissue: ovary']",age: 51,tissue: ovary
+GSM6125539,Human_ovary7_snRNA-seq,ovary,"['age: 52', 'gender: female', 'tissue: ovary']",age: 52,tissue: ovary
+GSM6125540,Human_ovary8_snRNA-seq,ovary,"['age: 54', 'gender: female', 'tissue: ovary']",age: 54,tissue: ovary
+GSM6125541,Human_ovary1_snATAC-seq,ovary,"['age: 23', 'gender: female', 'tissue: ovary']",age: 23,tissue: ovary
+GSM6125542,Human_ovary2_snATAC-seq,ovary,"['age: 27', 'gender: female', 'tissue: ovary']",age: 27,tissue: ovary
+GSM6125543,Human_ovary3_snATAC-seq,ovary,"['age: 28', 'gender: female', 'tissue: ovary']",age: 28,tissue: ovary
+GSM6125544,Human_ovary4_snATAC-seq,ovary,"['age: 29', 'gender: female', 'tissue: ovary']",age: 29,tissue: ovary
+GSM6125545,Human_ovary5_snATAC-seq,ovary,"['age: 49', 'gender: female', 'tissue: ovary']",age: 49,tissue: ovary
+GSM6125546,Human_ovary6_snATAC-seq,ovary,"['age: 51', 'gender: female', 'tissue: ovary']",age: 51,tissue: ovary
+GSM6125547,Human_ovary7_snATAC-seq,ovary,"['age: 52', 'gender: female', 'tissue: ovary']",age: 52,tissue: ovary
+GSM6125548,Human_ovary8_snATAC-seq,ovary,"['age: 54', 'gender: female', 'tissue: ovary']",age: 54,tissue: ovary

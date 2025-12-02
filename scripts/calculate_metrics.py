@@ -263,25 +263,25 @@ metrics_summary = {
         'AUC-ROC': f"{auc_roc:.3f}" if 'auc_roc' in locals() else "N/A",
         'PR-AUC': f"{pr_auc:.3f}" if 'pr_auc' in locals() else "N/A",
         'Target': "> 0.75",
-        'Status': "✅" if 'auc_roc' in locals() and auc_roc > 0.75 else "⏳"
+        'Status': "Complete" if 'auc_roc' in locals() and auc_roc > 0.75 else "Pending"
     },
     'CHS Discriminative Ability': {
         'AUC (GV vs MI)': f"{chs_auc:.3f}" if 'chs_auc' in locals() else "N/A",
         "Cohen's d": f"{cohens_d:.3f}" if 'cohens_d' in locals() else "N/A",
         'Target': "> 0.7",
-        'Status': "✅" if 'chs_auc' in locals() and chs_auc > 0.7 else "⏳"
+        'Status': "Complete" if 'chs_auc' in locals() and chs_auc > 0.7 else "Pending"
     },
     'Latent Space Quality': {
         'Silhouette Score': f"{silhouette:.3f}" if 'silhouette' in locals() else "N/A",
         'Davies-Bouldin': f"{db_index:.3f}" if 'db_index' in locals() else "N/A",
         'Calinski-Harabasz': f"{ch_score:.3f}" if 'ch_score' in locals() else "N/A",
-        'Status': "✅" if 'silhouette' in locals() and silhouette > 0.3 else "⏳"
+        'Status': "Complete" if 'silhouette' in locals() and silhouette > 0.3 else "Pending"
     },
     'Correlation Analysis': {
         'Z vs Age': f"r = {corr_age:.3f}, p = {pval_age:.4f}" if 'corr_age' in locals() else "N/A",
         'Z vs Health Score': f"r = {corr_hs:.3f}, p = {pval_hs:.4f}" if 'corr_hs' in locals() else "N/A",
         'Target': "r > 0.7",
-        'Status': "✅" if 'corr_age' in locals() and abs(corr_age) > 0.7 else "⏳"
+        'Status': "Complete" if 'corr_age' in locals() and abs(corr_age) > 0.7 else "Pending"
     }
 }
 

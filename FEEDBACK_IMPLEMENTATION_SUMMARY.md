@@ -7,7 +7,7 @@ This document summarizes the implementation of all feedback items from the profe
 
 ---
 
-## 1. ✅ "Double check why your gene number is so large"
+## 1. "Double check why your gene number is so large"
 
 ### Changes Made:
 
@@ -34,7 +34,7 @@ This document summarizes the implementation of all feedback items from the profe
 
 ---
 
-## 2. ✅ "I'd also do post-hoc analysis to find single genes that correlate with the pseudotime"
+## 2. "I'd also do post-hoc analysis to find single genes that correlate with the pseudotime"
 
 ### Changes Made:
 
@@ -57,7 +57,7 @@ This document summarizes the implementation of all feedback items from the profe
 
 ---
 
-## 3. ✅ "The variance result is interesting – redo with more hyperparameters to evaluate robustness"
+## 3. "The variance result is interesting – redo with more hyperparameters to evaluate robustness"
 
 ### Changes Made:
 
@@ -89,7 +89,7 @@ This document summarizes the implementation of all feedback items from the profe
 
 ---
 
-## 4. ✅ "Are there different cell types that could be correlated with oocyte age that are easier to collect?"
+## 4. "Are there different cell types that could be correlated with oocyte age that are easier to collect?"
 
 ### Changes Made:
 
@@ -168,7 +168,7 @@ Subject: Re: Project Feedback - Implementation Summary
 
 Dear Professor [Name],
 
-Thank you for the detailed feedback on our oocyte aging analysis project. We've implemented all of your suggestions:
+This document summarizes implementation of feedback on the oocyte aging analysis project. All suggestions have been addressed:
 
 1. **Gene numbers clarification**: Updated all documentation to explicitly distinguish between transcripts (204,563), gene symbols (126,966), and detected genes per cell (~4,256). Also clarified that we're using a 20-cell subset from a 72-oocyte dataset, with explicit rationale.
 
@@ -188,7 +188,7 @@ Best regards,
 
 ## Status
 
-✅ **All feedback items fully addressed**
+**All feedback items fully addressed**
 
 - [x] Gene numbers clarified (transcripts vs. genes vs. detected)
 - [x] Dataset subset rationale explained (20/72 oocytes)

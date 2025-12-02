@@ -403,13 +403,13 @@ Replication: Z% overlap with published age-related genes"
 
 | Metric | Current | Target | Status |
 |--------|---------|--------|--------|
-| Sample Size | 20 | 50+ | ⏳ In Progress |
-| Test Set Correlation | N/A | r > 0.70 | ⏳ Pending |
-| CV Correlation | N/A | r = X.XX ± X.XX | ⏳ Pending |
-| AUC-ROC | N/A | > 0.85 | ⏳ Pending |
-| FDR Correction | No | Yes | ⏳ Pending |
-| Confidence Intervals | No | Yes | ⏳ Pending |
-| Literature Overlap | N/A | > 50% | ⏳ Pending |
+| Sample Size | 20 | 50+ | In Progress |
+| Test Set Correlation | N/A | r > 0.70 | Pending |
+| CV Correlation | N/A | r = X.XX ± X.XX | Pending |
+| AUC-ROC | N/A | > 0.85 | Pending |
+| FDR Correction | No | Yes | Pending |
+| Confidence Intervals | No | Yes | Pending |
+| Literature Overlap | N/A | > 50% | Pending |
 
 ---
 

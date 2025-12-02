@@ -125,8 +125,8 @@ bash run_all_visualizations.sh
 -  Age distribution histograms
 
 ### Added
-- ✅ PCA plot colored by stage (shows global structure)
-- ✅ Combined box+violin plot for health scores
+- PCA plot colored by stage (shows global structure)
+- Combined box+violin plot for health scores
 
 ### Why These Changes?
 1. **PCA Plot**: More informative than histograms - shows relationships between samples

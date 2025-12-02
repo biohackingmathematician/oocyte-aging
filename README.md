@@ -210,14 +210,27 @@ pip install -r requirements-minimal.txt
 
 ### Datasets Used
 
-1. **Zenodo Dataset** (Primary)
+1. **Zenodo Dataset** (Primary) - Llonch et al. 2021
    - **Source**: Zenodo 14163313
    - **Full Dataset**: 72 oocytes across all maturation stages (18–43 years)
    - **Analysis Subset**: 20 oocytes (6 GV, 14 MI) with complete age + stage metadata
-   - **Rationale for Subsetting**: 
+   - **Paper**: Llonch, S., et al. (2021). Single human oocyte transcriptome analysis reveals a novel aging trajectory. *Aging Cell*, 20(5), e13360.
+   
+   **Dataset Selection Rationale**:
+   - **Optimal for aging analysis**: Explicit aging study design with continuous age coverage (18-43 years, 25-year span)
+   - **Includes critical window**: Covers the 35-43 year reproductive decline period
+   - **Large sample size**: One of the largest aging-focused oocyte scRNA-seq datasets published
+   - **Age diversity**: 72 oocytes from 37 women enables continuous trajectory modeling
+   - **Stage representation**: Includes GV, MI, and MII stages across age range
+   
+   **Note**: Alternative datasets were evaluated (e.g., Machlin et al. 2025, 144 oocytes) but were deemed unsuitable as they focused on cryopreservation effects rather than aging, with limited age range (16-27 years, only 3 donors). The Llonch et al. dataset remains optimal for continuous aging trajectory analysis.
+   
+   **Rationale for Subsetting to 20 oocytes**: 
      - Focus on the GV→MI transition (primary maturation checkpoint)
      - Keep the project computationally tractable
      - Ensure complete metadata availability for age integration and clinical analysis
+   
+   **Technical Details**:
    - **Raw Features**: 204,563 Kallisto transcripts (isoforms)
    - **Gene-level Matrix**: 126,966 gene symbols (after transcript-to-gene mapping)
    - **Detected per Cell**: ~4,256 ± 892 genes (after QC, ≥2 cells expressing)

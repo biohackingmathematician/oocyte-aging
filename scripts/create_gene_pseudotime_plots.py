@@ -16,19 +16,22 @@ from statsmodels.stats.multitest import multipletests
 import warnings
 warnings.filterwarnings('ignore')
 
+# Set base directory
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+RESULTS_DIR = os.path.join(BASE_DIR, 'pipeline_results_scvi')
+TABLES_DIR = os.path.join(RESULTS_DIR, 'tables')
+VIZ_DIR = os.path.join(BASE_DIR, 'visualizations')
+
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-print("="*70)
-print("GENE-PSEUDOTIME CORRELATION ANALYSIS")
-print("="*70)
+print("Gene-pseudotime correlation analysis")
 
-# Create output directory
-os.makedirs('visualizations', exist_ok=True)
+# Create output directories
+os.makedirs(VIZ_DIR, exist_ok=True)
+os.makedirs(TABLES_DIR, exist_ok=True)
 
-# ============================================================================
 # Load data
-# ============================================================================
 print("\nLoading data...")
 
 try:
@@ -36,44 +39,43 @@ try:
     import anndata as ad
     
     # Try to load the complete annotated data
-    if os.path.exists('adata_complete_scvi.h5ad'):
-        adata = sc.read_h5ad('adata_complete_scvi.h5ad')
-        print(f"✓ Loaded adata_complete_scvi.h5ad: {adata.shape}")
-    elif os.path.exists('adata_with_scvi.h5ad'):
-        adata = sc.read_h5ad('adata_with_scvi.h5ad')
-        print(f"✓ Loaded adata_with_scvi.h5ad: {adata.shape}")
+    adata_complete_path = os.path.join(BASE_DIR, 'adata_complete_scvi.h5ad')
+    adata_scvi_path = os.path.join(BASE_DIR, 'adata_with_scvi.h5ad')
+    
+    if os.path.exists(adata_complete_path):
+        adata = sc.read_h5ad(adata_complete_path)
+        print(f"Loaded adata_complete_scvi.h5ad: {adata.shape}")
+    elif os.path.exists(adata_scvi_path):
+        adata = sc.read_h5ad(adata_scvi_path)
+        print(f"Loaded adata_with_scvi.h5ad: {adata.shape}")
     else:
-        print("✗ ERROR: No AnnData file found. Please run pipeline first.")
+        print("Error: No AnnData file found. Please run pipeline first.")
         sys.exit(1)
     
     # Check required fields
     if 'cellular_age_z' not in adata.obs.columns:
-        print("✗ ERROR: 'cellular_age_z' not found in adata.obs")
+        print("Error: 'cellular_age_z' not found in adata.obs")
         sys.exit(1)
     
     if 'log1p_norm' not in adata.layers:
-        print("  Creating log1p_norm layer...")
+        print("Creating log1p_norm layer...")
         adata_norm = adata.copy()
         sc.pp.normalize_total(adata_norm, target_sum=1e4)
         sc.pp.log1p(adata_norm)
         adata.layers['log1p_norm'] = adata_norm.X.copy()
-        print("  ✓ Created log1p_norm layer")
+        print("Created log1p_norm layer")
     
     print(f"  Observations: {adata.n_obs}")
     print(f"  Variables: {adata.n_vars}")
     
 except Exception as e:
-    print(f"✗ Error loading data: {e}")
+    print(f"Error loading data: {e}")
     import traceback
     traceback.print_exc()
     sys.exit(1)
 
-# ============================================================================
 # Compute correlations for all genes
-# ============================================================================
-print("\n" + "="*70)
-print("Computing gene-trajectory correlations")
-print("="*70)
+print("\nComputing gene-trajectory correlations")
 
 # Get expression matrix (log-normalized)
 if 'log1p_norm' in adata.layers:
@@ -121,21 +123,18 @@ gene_df['fdr'] = multipletests(gene_df['p_value'].values, method='fdr_bh')[1]
 gene_df['abs_correlation'] = gene_df['correlation'].abs()
 gene_df = gene_df.sort_values('abs_correlation', ascending=False)
 
-print(f"  ✓ Computed correlations for {len(gene_df)} genes")
-print(f"  Top correlation: {gene_df.iloc[0]['correlation']:.3f}")
-print(f"  Genes with |ρ| > 0.7: {(gene_df['abs_correlation'] > 0.7).sum()}")
-print(f"  Genes with |ρ| > 0.7 and FDR < 0.1: {((gene_df['abs_correlation'] > 0.7) & (gene_df['fdr'] < 0.1)).sum()}")
+print(f"Computed correlations for {len(gene_df)} genes")
+print(f"Top correlation: {gene_df.iloc[0]['correlation']:.3f}")
+print(f"Genes with |ρ| > 0.7: {(gene_df['abs_correlation'] > 0.7).sum()}")
+print(f"Genes with |ρ| > 0.7 and FDR < 0.1: {((gene_df['abs_correlation'] > 0.7) & (gene_df['fdr'] < 0.1)).sum()}")
 
 # Save full results
-gene_df.to_csv('pipeline_results_scvi/tables/gene_trajectory_correlations.csv', index=False)
-print("  ✓ Saved full correlation results to pipeline_results_scvi/tables/gene_trajectory_correlations.csv")
+correlations_path = os.path.join(TABLES_DIR, 'gene_trajectory_correlations.csv')
+gene_df.to_csv(correlations_path, index=False)
+print(f"Saved full correlation results to {correlations_path}")
 
-# ============================================================================
 # Select top genes for plotting
-# ============================================================================
-print("\n" + "="*70)
-print("Selecting top genes for visualization")
-print("="*70)
+print("\nSelecting top genes for visualization")
 
 # Select top decreasing and increasing genes
 top_decreasing = gene_df[gene_df['correlation'] < 0].head(3)
@@ -152,9 +151,7 @@ for idx, row in top_increasing.iterrows():
 # Combine for plotting
 top_genes = pd.concat([top_decreasing, top_increasing])
 
-# ============================================================================
 # Create visualization
-# ============================================================================
 print("\n" + "="*70)
 print("Creating gene-pseudotime plots")
 print("="*70)
@@ -225,15 +222,12 @@ for i, (idx, row) in enumerate(top_genes.iterrows()):
         cbar.set_label('Uncertainty (σ)', fontsize=8)
 
 plt.tight_layout()
-plt.savefig('visualizations/gene_pseudotime_correlations.png', dpi=300, bbox_inches='tight')
-print("  ✓ Saved visualization to visualizations/gene_pseudotime_correlations.png")
+viz_path = os.path.join(VIZ_DIR, 'gene_pseudotime_correlations.png')
+plt.savefig(viz_path, dpi=300, bbox_inches='tight')
+print(f"Saved visualization to {viz_path}")
 
-# ============================================================================
 # Summary statistics
-# ============================================================================
-print("\n" + "="*70)
-print("Summary Statistics")
-print("="*70)
+print("\nSummary statistics")
 
 n_significant = ((gene_df['abs_correlation'] > 0.7) & (gene_df['fdr'] < 0.1)).sum()
 print(f"\nGenes with |ρ| > 0.7 and FDR < 0.1: {n_significant}")
@@ -241,7 +235,5 @@ print(f"\nGenes with |ρ| > 0.7 and FDR < 0.1: {n_significant}")
 print(f"\nTop 10 genes by absolute correlation:")
 print(gene_df.head(10)[['gene', 'correlation', 'p_value', 'fdr']].to_string(index=False))
 
-print("\n" + "="*70)
-print("COMPLETE")
-print("="*70)
+print("\nAnalysis complete")
 

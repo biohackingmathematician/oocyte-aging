@@ -6,19 +6,19 @@ This report summarizes the complete execution of the oocyte aging analysis pipel
 
 ## Pipeline Steps Completed
 
-### ✓ Step 1: Data Loading
+### Step 1: Data Loading
 - **Input**: `adata_with_scvi.h5ad`
 - **Data shape**: 20 samples × 126,966 genes
 - **scVI latent space**: 10 dimensions (20, 10)
 - **Stages**: GV (6), MI (14)
 
-### ✓ Step 2: DPT Trajectory Computation
+### Step 2: DPT Trajectory Computation
 - **Method**: Diffusion Pseudotime computed on scVI latent space
 - **DPT range**: 0.000 - 1.000
 - **Trajectory-stage correlation**: ρ = 0.473, p = 0.0352
 - **Result**: Significant ordering of cells along GV→MI trajectory
 
-### ✓ Step 3: Pathway Score Calculation
+### Step 3: Pathway Score Calculation
 - **Pathways analyzed**: 5 key biological pathways
   1. **Cell Cycle**: 98 genes matched
   2. **Mitochondrial**: 84 genes matched
@@ -26,7 +26,7 @@ This report summarizes the complete execution of the oocyte aging analysis pipel
   4. **Oxidative Stress**: 76 genes matched
   5. **Apoptosis**: 119 genes matched
 
-### ✓ Step 4: Composite Health Score
+### Step 4: Composite Health Score
 - **Score range**: 0.0 - 100.0
 - **Weighted components**:
   - Cell Cycle: 25%
@@ -41,12 +41,12 @@ This report summarizes the complete execution of the oocyte aging analysis pipel
 - **MI**: mean = 69.5, std = 25.5
 - **Fold-change**: 1.31× (GV > MI)
 
-### ✓ Step 5: Cellular Age Computation
+### Step 5: Cellular Age Computation
 - **Method**: DPT pseudotime normalized to 0-1 (cellular_age_z)
 - **Uncertainty**: Computed from local variance in scVI space
 - **Result**: Continuous cellular aging axis from young (0) to old (1)
 
-### ✓ Step 6: Risk Stratification
+### Step 6: Risk Stratification
 - **Risk score range**: 124.1 - 800.8
 - **Thresholds**:
   - Low Risk: < 298.9
@@ -58,7 +58,7 @@ This report summarizes the complete execution of the oocyte aging analysis pipel
 - **Moderate Risk**: 6 samples (30.0%)
 - **High Risk (Accelerated Agers)**: 7 samples (35.0%)
 
-### ✓ Step 7: Clinical Decision Framework
+### Step 7: Clinical Decision Framework
 - **Framework created**: Comprehensive decision support table
 - **Columns**: 15 features including pathway scores, health scores, risk groups, and recommendations
 - **Recommendations**:
@@ -66,7 +66,7 @@ This report summarizes the complete execution of the oocyte aging analysis pipel
   - Moderate Risk: "Consider intervention - Discuss fertility preservation options"
   - High Risk: "Urgent intervention - Immediate fertility preservation consultation"
 
-### ✓ Step 8: Performance Metrics
+### Step 8: Performance Metrics
 All key validation metrics computed and saved:
 
 #### Trajectory Validation
@@ -92,7 +92,7 @@ All pathways show appropriate variation:
 - Oxidative Stress: mean = 0.54, std = 0.23
 - Apoptosis: mean = 0.54, std = 0.25
 
-### ✓ Step 9: Data Export
+### Step 9: Data Export
 - **Complete annotated data**: `adata_complete_scvi.h5ad`
 - **Clinical framework**: `clinical_decision_framework_scvi.csv`
 - **Pathway scores**: `pathway_scores_scvi.csv`
@@ -101,23 +101,23 @@ All pathways show appropriate variation:
 ## Key Results Summary
 
 ### 1. Trajectory Analysis
-✅ **DPT successfully orders cells** along GV→MI maturation trajectory
+**DPT successfully orders cells** along GV→MI maturation trajectory
 - Statistical significance: p = 0.0352
 - Strong biological validation
 
 ### 2. Health Scoring
-✅ **Health scores distinguish developmental stages**
+**Health scores distinguish developmental stages**
 - GV oocytes: 91.1 (healthy)
 - MI oocytes: 69.5 (declining health)
 - Significant difference: p = 0.0059
 
 ### 3. Risk Stratification
-✅ **Three distinct risk groups identified**
+**Three distinct risk groups identified**
 - Clear separation between Low and High risk (p = 0.0006)
 - Cellular age difference: 0.59 effect size
 
 ### 4. Pathway Analysis
-✅ **All 5 pathways successfully quantified**
+**All 5 pathways successfully quantified**
 - Genes matched across all pathways
 - Scores show appropriate biological variation
 - Integrated into composite health score
@@ -180,11 +180,11 @@ All pathways show appropriate variation:
 
 ## Validation Status
 
-✅ All validation metrics pass significance thresholds
-✅ Trajectory ordering statistically significant
-✅ Health scores distinguish stages
-✅ Risk groups show strong separation
-✅ Pathway analysis complete
+All validation metrics pass significance thresholds
+Trajectory ordering statistically significant
+Health scores distinguish stages
+Risk groups show strong separation
+Pathway analysis complete
 
 ## Conclusion
 

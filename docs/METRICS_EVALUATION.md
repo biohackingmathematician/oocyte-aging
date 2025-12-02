@@ -14,7 +14,7 @@ This document evaluates the current implementation against the research objectiv
 
 ## Current Implementation Status
 
-### ✅ Implemented Metrics
+### Implemented Metrics
 
 1. **Trajectory Analysis**:
    - Diffusion Pseudotime (DPT) correlation with stage: ρ = -0.79, p < 0.001
@@ -38,7 +38,7 @@ This document evaluates the current implementation against the research objectiv
 
 #### A. GPLVM Implementation Metrics (High Priority)
 
-**Status**: ⏳ Not Yet Implemented (PCA fallback currently used)
+**Status**: Not Yet Implemented (PCA fallback currently used)
 
 **Required Metrics**:
 
@@ -88,7 +88,7 @@ This document evaluates the current implementation against the research objectiv
 
 #### C. Leave-One-Study-Out Cross-Validation
 
-**Status**: ⏳ Framework exists but limited by single-study dataset
+**Status**: Framework exists but limited by single-study dataset
 
 **Required Metrics**:
 
@@ -115,7 +115,7 @@ This document evaluates the current implementation against the research objectiv
 
 #### D. Pathway Analysis (Partially Done)
 
-**Status**: ✅ Pathway scores calculated, ⏳ Enrichment statistics needed
+**Status**: Pathway scores calculated, Enrichment statistics needed
 
 **Missing Metrics**:
 
@@ -137,7 +137,7 @@ This document evaluates the current implementation against the research objectiv
 
 #### E. Intervention Timing Accuracy
 
-**Status**: ⏳ NOT YET IMPLEMENTED
+**Status**: NOT YET IMPLEMENTED
 
 **Critical Missing Metrics**:
 
@@ -164,7 +164,7 @@ This document evaluates the current implementation against the research objectiv
 
 #### F. Clinical Calibration
 
-**Status**: ⏳ MISSING
+**Status**: MISSING
 
 **Required Metrics**:
 
@@ -182,7 +182,7 @@ This document evaluates the current implementation against the research objectiv
 
 ### CATEGORY 5: Optimal Transport
 
-**Status**: ⏳ Planned, Needs Specification
+**Status**: Planned, Needs Specification
 
 **Required Metrics**:
 
@@ -278,27 +278,27 @@ This document evaluates the current implementation against the research objectiv
 | Metric | Value | Target | Status | Notes |
 |--------|-------|--------|--------|-------|
 | **Trajectory Learning** |
-| DPT Correlation (pseudotime vs stage) | ρ = -0.79 | ρ > 0.7 | ✅ | Strong ordering |
-| GPLVM ELBO | N/A | Converged | ⏳ | PCA fallback used |
-| Reconstruction MSE | N/A | < 0.5 | ⏳ | Not applicable (PCA) |
-| Correlation Z vs age | [TO CALCULATE] | r > 0.7 | ⏳ | Needs validation |
+| DPT Correlation (pseudotime vs stage) | ρ = -0.79 | ρ > 0.7 | | Strong ordering |
+| GPLVM ELBO | N/A | Converged | | PCA fallback used |
+| Reconstruction MSE | N/A | < 0.5 | | Not applicable (PCA) |
+| Correlation Z vs age | [TO CALCULATE] | r > 0.7 | | Needs validation |
 | **Uncertainty Quantification** |
-| Mean uncertainty (σ) | 2152.97 ± 3225.44 | - | ✅ | Heuristic estimate |
-| Calibration ECE | [TO CALCULATE] | < 0.1 | ⏳ | Needs implementation |
-| Coverage (95% CI) | [TO CALCULATE] | 90-95% | ⏳ | Needs implementation |
+| Mean uncertainty (σ) | 2152.97 ± 3225.44 | - | | Heuristic estimate |
+| Calibration ECE | [TO CALCULATE] | < 0.1 | | Needs implementation |
+| Coverage (95% CI) | [TO CALCULATE] | 90-95% | | Needs implementation |
 | **Biological Validation** |
-| OXPHOS pathway score | [Calculated] | Negative correlation | ✅ | Needs NES |
-| Spindle pathway score | [Calculated] | Positive correlation | ✅ | Needs NES |
-| Pathway FDR | [TO CALCULATE] | < 0.05 | ⏳ | Needs GSEA |
+| OXPHOS pathway score | [Calculated] | Negative correlation | | Needs NES |
+| Spindle pathway score | [Calculated] | Positive correlation | | Needs NES |
+| Pathway FDR | [TO CALCULATE] | < 0.05 | | Needs GSEA |
 | **Cross-Study Validation** |
-| LOO CV correlation | N/A | r > 0.7 | ⏳ | Single study available |
-| Batch kBET p-value | [TO CALCULATE] | > 0.05 | ⏳ | Needs implementation |
-| Wasserstein distance | [TO CALCULATE] | < 0.3 | ⏳ | Needs implementation |
+| LOO CV correlation | N/A | r > 0.7 | | Single study available |
+| Batch kBET p-value | [TO CALCULATE] | > 0.05 | | Needs implementation |
+| Wasserstein distance | [TO CALCULATE] | < 0.3 | | Needs implementation |
 | **Clinical Performance** |
-| Risk stratification AUC | [TO CALCULATE] | > 0.75 | ⏳ | **HIGH PRIORITY** |
-| CHS discriminative ability | [TO CALCULATE] | AUC > 0.7 | ⏳ | **HIGH PRIORITY** |
-| Brier score | [TO CALCULATE] | < 0.2 | ⏳ | **HIGH PRIORITY** |
-| AMH prediction MAE | N/A | ±2 years | ⏳ | Requires GP regression |
+| Risk stratification AUC | [TO CALCULATE] | > 0.75 | | **HIGH PRIORITY** |
+| CHS discriminative ability | [TO CALCULATE] | AUC > 0.7 | | **HIGH PRIORITY** |
+| Brier score | [TO CALCULATE] | < 0.2 | | **HIGH PRIORITY** |
+| AMH prediction MAE | N/A | ±2 years | | Requires GP regression |
 
 ---
 
@@ -307,11 +307,11 @@ This document evaluates the current implementation against the research objectiv
 | Method | Uncertainty | Clinical Output | Correlation with Age | Limitations |
 |--------|-------------|-----------------|---------------------|-------------|
 | DPT (Current) |  | Health score | ρ = -0.79 | No uncertainty |
-| PCA-based (Current) | ✅ σ² (heuristic) | Health score + risk groups | r = 0.27 | Not true Bayesian |
-| scVI + DPT (Implemented) | ✅ σ² (heuristic) | Health score + risk groups | r = 0.27 | Sensitivity analysis confirms robustness |
-| GPLVM (Planned) | ✅ σ² (Bayesian) | Health score + CI | Target r > 0.75 | Requires compatible Python |
+| PCA-based (Current) | σ² (heuristic) | Health score + risk groups | r = 0.27 | Not true Bayesian |
+| scVI + DPT (Implemented) | σ² (heuristic) | Health score + risk groups | r = 0.27 | Sensitivity analysis confirms robustness |
+| GPLVM (Planned) | σ² (Bayesian) | Health score + CI | Target r > 0.75 | Requires compatible Python |
 | Monocle (Literature) |  | Trajectory only | Variable | No clinical translation |
-| **Our Framework** | ✅ | Risk groups + timing | r = 0.27, p = 0.25 | Small sample size (n=20) |
+| **Our Framework** | | Risk groups + timing | r = 0.27, p = 0.25 | Small sample size (n=20) |
 
 **Note**: Hyperparameter sensitivity analysis (see `scripts/gplvm_hyperparam_sensitivity.py`) confirms that key findings (MI > GV uncertainty, ~20-30% high-uncertainty cells) are robust across kernel hyperparameters.
 
@@ -321,23 +321,23 @@ This document evaluates the current implementation against the research objectiv
 
 ### For "Quantify Heterogeneity and Uncertainty":
 
-1. ✅ Per-cell uncertainty (σ²) - **IMPLEMENTED** (heuristic)
-2. ⏳ Calibration curves showing uncertainty is accurate - **NEEDS IMPLEMENTATION**
-3. ⏳ Heterogeneity quantification: coefficient of variation across pathways - **NEEDS IMPLEMENTATION**
-4. ⏳ Inter-individual variability: ratio of between-donor to within-donor variance - **NEEDS IMPLEMENTATION**
+1. Per-cell uncertainty (σ²) - **IMPLEMENTED** (heuristic)
+2. Calibration curves showing uncertainty is accurate - **NEEDS IMPLEMENTATION**
+3. Heterogeneity quantification: coefficient of variation across pathways - **NEEDS IMPLEMENTATION**
+4. Inter-individual variability: ratio of between-donor to within-donor variance - **NEEDS IMPLEMENTATION**
 
 ### For "Identify Optimal Intervention Windows":
 
-1. ⏳ **Lead time analysis**: Years gained vs ASRM age-35 recommendation - **NEEDS IMPLEMENTATION**
-2. ⏳ **Sensitivity/Specificity trade-offs** at different CHS thresholds - **NEEDS IMPLEMENTATION**
-3. ⏳ **Number needed to screen (NNS)** to prevent one late intervention - **NEEDS IMPLEMENTATION**
-4. ✅ Stage-specific feasibility (67% GV viable vs 17% MI) - **DOCUMENTED**
+1. **Lead time analysis**: Years gained vs ASRM age-35 recommendation - **NEEDS IMPLEMENTATION**
+2. **Sensitivity/Specificity trade-offs** at different CHS thresholds - **NEEDS IMPLEMENTATION**
+3. **Number needed to screen (NNS)** to prevent one late intervention - **NEEDS IMPLEMENTATION**
+4. Stage-specific feasibility (67% GV viable vs 17% MI) - **DOCUMENTED**
 
 ### For "Distinguish Chronological from Cellular Age":
 
-1. ⏳ **Age discrepancy metric**: |Z_cellular - age_chronological| / age_chronological - **NEEDS IMPLEMENTATION**
-2. ⏳ **Proportion of "accelerated agers"**: % with Z >> chronological age - **NEEDS IMPLEMENTATION**
-3. ⏳ **Biological age prediction error**: MAE between predicted and actual AMH decline - **REQUIRES AMH DATA**
+1. **Age discrepancy metric**: |Z_cellular - age_chronological| / age_chronological - **NEEDS IMPLEMENTATION**
+2. **Proportion of "accelerated agers"**: % with Z >> chronological age - **NEEDS IMPLEMENTATION**
+3. **Biological age prediction error**: MAE between predicted and actual AMH decline - **REQUIRES AMH DATA**
 
 ---
 
@@ -373,12 +373,12 @@ This document evaluates the current implementation against the research objectiv
 
 ## Next Steps
 
-1. ✅ **Completed**: Risk stratification AUC calculation (AUC = 1.000)
-2. ✅ **Completed**: Clinical Health Score validation (AUC = 1.000, Cohen's d = 2.161)
-3. ✅ **Completed**: Uncertainty calibration analysis (95% coverage = 1.000)
-4. ✅ **Completed**: Latent space quality metrics (Silhouette, Davies-Bouldin, Calinski-Harabasz)
-5. ✅ **Completed**: Hyperparameter sensitivity analysis (`scripts/gplvm_hyperparam_sensitivity.py`)
-6. ✅ **Completed**: Gene-pseudotime correlation analysis with FDR correction (`scripts/create_gene_pseudotime_plots.py`)
+1. **Completed**: Risk stratification AUC calculation (AUC = 1.000)
+2. **Completed**: Clinical Health Score validation (AUC = 1.000, Cohen's d = 2.161)
+3. **Completed**: Uncertainty calibration analysis (95% coverage = 1.000)
+4. **Completed**: Latent space quality metrics (Silhouette, Davies-Bouldin, Calinski-Harabasz)
+5. **Completed**: Hyperparameter sensitivity analysis (`scripts/gplvm_hyperparam_sensitivity.py`)
+6. **Completed**: Gene-pseudotime correlation analysis with FDR correction (`scripts/create_gene_pseudotime_plots.py`)
 7. **Remaining**: Full Bayesian GPLVM when compatible Python version available
 8. **Remaining**: Expand dataset to full 72-oocyte cohort
 

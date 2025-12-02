@@ -1,4 +1,4 @@
-# scVI Setup Complete ✅
+# scVI Setup Complete 
 
 ## Summary
 

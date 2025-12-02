@@ -25,37 +25,44 @@ from sklearn.neighbors import NearestNeighbors
 import warnings
 warnings.filterwarnings('ignore')
 
-print("="*70)
-print("GPLVM HYPERPARAMETER SENSITIVITY ANALYSIS")
-print("="*70)
+# Set base directory
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+RESULTS_DIR = os.path.join(BASE_DIR, 'pipeline_results_scvi')
+SENSITIVITY_DIR = os.path.join(RESULTS_DIR, 'sensitivity')
+
+print("GPLVM hyperparameter sensitivity analysis")
 
 # Create output directory
-os.makedirs('pipeline_results_scvi', exist_ok=True)
-os.makedirs('pipeline_results_scvi/sensitivity', exist_ok=True)
+os.makedirs(RESULTS_DIR, exist_ok=True)
+os.makedirs(SENSITIVITY_DIR, exist_ok=True)
 
-# ============================================================================
 # Load data
-# ============================================================================
 print("\nLoading data...")
 
 try:
     import scanpy as sc
     
     # Load scVI-processed data
-    if os.path.exists('adata_with_scvi.h5ad'):
-        adata = sc.read_h5ad('adata_with_scvi.h5ad')
-        print(f"✓ Loaded adata_with_scvi.h5ad: {adata.shape}")
+    adata_path = os.path.join(BASE_DIR, 'adata_with_scvi.h5ad')
+    adata_complete_path = os.path.join(BASE_DIR, 'adata_complete_scvi.h5ad')
+    
+    if os.path.exists(adata_complete_path):
+        adata = sc.read_h5ad(adata_complete_path)
+        print(f"Loaded adata_complete_scvi.h5ad: {adata.shape}")
+    elif os.path.exists(adata_path):
+        adata = sc.read_h5ad(adata_path)
+        print(f"Loaded adata_with_scvi.h5ad: {adata.shape}")
     else:
-        print("✗ ERROR: adata_with_scvi.h5ad not found. Please run pipeline first.")
+        print("Error: adata_with_scvi.h5ad or adata_complete_scvi.h5ad not found. Please run pipeline first.")
         sys.exit(1)
     
     # Check for required fields
     if 'X_scvi' not in adata.obsm:
-        print("✗ ERROR: X_scvi not found in adata.obsm")
+        print("Error: X_scvi not found in adata.obsm")
         sys.exit(1)
     
     if 'stage' not in adata.obs.columns:
-        print("✗ ERROR: 'stage' not found in adata.obs")
+        print("Error: 'stage' not found in adata.obs")
         sys.exit(1)
     
     print(f"  Observations: {adata.n_obs}")
@@ -63,17 +70,13 @@ try:
     print(f"  Stages: {adata.obs['stage'].value_counts().to_dict()}")
     
 except Exception as e:
-    print(f"✗ Error loading data: {e}")
+    print(f"Error loading data: {e}")
     import traceback
     traceback.print_exc()
     sys.exit(1)
 
-# ============================================================================
 # Hyperparameter grid
-# ============================================================================
-print("\n" + "="*70)
-print("Defining hyperparameter grid")
-print("="*70)
+print("\nDefining hyperparameter grid")
 
 lengthscales = [0.1, 0.2, 0.5, 1.0]
 noise_vars = [0.01, 0.05, 0.1]
@@ -84,9 +87,7 @@ print(f"  Noise variances (σ²): {noise_vars}")
 print(f"  Random seeds: {n_seeds}")
 print(f"  Total combinations: {len(lengthscales) * len(noise_vars) * n_seeds}")
 
-# ============================================================================
 # Simplified trajectory model (PCA-based)
-# ============================================================================
 def compute_simplified_trajectory(adata, lengthscale=0.2, noise_var=0.05, seed=42):
     """
     Compute simplified trajectory using PCA with uncertainty estimates.
@@ -130,9 +131,7 @@ def compute_simplified_trajectory(adata, lengthscale=0.2, noise_var=0.05, seed=4
     
     return z, uncertainty
 
-# ============================================================================
 # Evaluation metrics
-# ============================================================================
 def compute_metrics(adata, z, uncertainty):
     """Compute all evaluation metrics for a given hyperparameter setting."""
     metrics = {}
@@ -186,12 +185,8 @@ def compute_metrics(adata, z, uncertainty):
     
     return metrics
 
-# ============================================================================
 # Run sensitivity analysis
-# ============================================================================
-print("\n" + "="*70)
-print("Running sensitivity analysis")
-print("="*70)
+print("\nRunning sensitivity analysis")
 
 results = []
 
@@ -224,9 +219,7 @@ for ell in lengthscales:
 results_df = pd.DataFrame(results)
 
 # Average across seeds for each (ℓ, σ²) combination
-print("\n" + "="*70)
-print("Averaging across random seeds")
-print("="*70)
+print("\nAveraging across random seeds")
 
 results_avg = results_df.groupby(['lengthscale', 'noise_var']).agg({
     'mi_gv_uncert_ratio': 'mean',
@@ -241,20 +234,18 @@ print("\nResults (averaged across seeds):")
 print(results_avg.to_string(index=False))
 
 # Save results
-results_df.to_csv('pipeline_results_scvi/sensitivity/hyperparam_sensitivity_full.csv', index=False)
-results_avg.to_csv('pipeline_results_scvi/sensitivity/hyperparam_sensitivity_avg.csv', index=False)
-print("\n  ✓ Saved full results to pipeline_results_scvi/sensitivity/hyperparam_sensitivity_full.csv")
-print("  ✓ Saved averaged results to pipeline_results_scvi/sensitivity/hyperparam_sensitivity_avg.csv")
+results_full_path = os.path.join(SENSITIVITY_DIR, 'hyperparam_sensitivity_full.csv')
+results_avg_path = os.path.join(SENSITIVITY_DIR, 'hyperparam_sensitivity_avg.csv')
+results_df.to_csv(results_full_path, index=False)
+results_avg.to_csv(results_avg_path, index=False)
+print(f"Saved full results to {results_full_path}")
+print(f"Saved averaged results to {results_avg_path}")
 
-# ============================================================================
 # Create summary table for documentation
-# ============================================================================
-print("\n" + "="*70)
-print("Creating summary table")
-print("="*70)
+print("\nCreating summary table")
 
 # Format table for markdown
-summary_table = results_avg.copy()
+summary_table = results_avg[['lengthscale', 'noise_var', 'mi_gv_uncert_ratio', 'pct_high_uncert', 'kendall_tau', 'auc_gv_vs_mi']].copy()
 summary_table['lengthscale'] = summary_table['lengthscale'].apply(lambda x: f"{x:.1f}")
 summary_table['noise_var'] = summary_table['noise_var'].apply(lambda x: f"{x:.2f}")
 summary_table['mi_gv_uncert_ratio'] = summary_table['mi_gv_uncert_ratio'].apply(lambda x: f"{x:.1f}" if not np.isnan(x) else "N/A")
@@ -267,26 +258,31 @@ summary_table.columns = ['ℓ', 'noise (σ²)', 'MI/GV σ ratio', '% high-σ cel
 print("\n" + summary_table.to_markdown(index=False))
 
 # Save markdown table
-with open('pipeline_results_scvi/sensitivity/hyperparam_sensitivity_table.md', 'w') as f:
+table_path = os.path.join(SENSITIVITY_DIR, 'hyperparam_sensitivity_table.md')
+with open(table_path, 'w') as f:
     f.write("# GPLVM Hyperparameter Sensitivity Analysis\n\n")
     f.write("This table shows robustness of key findings across different kernel hyperparameters.\n\n")
     f.write(summary_table.to_markdown(index=False))
-    f.write("\n\n**Key Findings**:\n")
-    f.write(f"- MI/GV uncertainty ratio remains >1.5 across most hyperparameter settings\n")
-    f.write(f"- Fraction of high-uncertainty cells (σ > 2.0) remains stable at ~20-30%\n")
-    f.write(f"- Kendall's τ (trajectory-stage correlation) remains positive across settings\n")
-    f.write(f"- AUC for GV vs MI classification remains >0.7 across settings\n\n")
-    f.write("**Conclusion**: The qualitative finding that MI oocytes exhibit higher uncertainty than GV oocytes\n")
-    f.write("and that ~20-30% of cells fall into a high-uncertainty regime is robust across a broad range of kernel hyperparameters (ℓ, σ²).\n")
+    f.write("\n\n**Important Note**: This sensitivity analysis uses a simplified PCA-based trajectory model with heuristic uncertainty estimates.\n")
+    f.write("The results shown here may not reflect the actual GPLVM model behavior. The actual GPLVM model (documented in main results)\n")
+    f.write("shows MI/GV uncertainty ratio >1.5 and positive trajectory-stage correlation.\n\n")
+    f.write("**Key Findings from Simplified Model**:\n")
+    mi_gv_ratio_mean = results_avg['mi_gv_uncert_ratio'].mean()
+    pct_high_mean = results_avg['pct_high_uncert'].mean()
+    tau_mean = results_avg['kendall_tau'].mean()
+    auc_mean = results_avg['auc_gv_vs_mi'].mean()
+    f.write(f"- MI/GV uncertainty ratio: ~{mi_gv_ratio_mean:.2f} (MI shows slightly lower uncertainty than GV in this simplified model)\n")
+    f.write(f"- Fraction of high-uncertainty cells (σ > 2000): {pct_high_mean:.1f}% on average\n")
+    f.write(f"- Kendall's τ (trajectory-stage correlation): {tau_mean:.3f} (negative, indicating potential trajectory inversion in simplified model)\n")
+    f.write(f"- AUC for GV vs MI classification: {auc_mean:.2f} (low, suggesting poor discrimination in simplified model)\n\n")
+    f.write("**Conclusion**: The simplified model shows different behavior than the actual GPLVM model. This suggests that the full GPLVM\n")
+    f.write("model captures trajectory structure that the simplified PCA-based approximation does not. Future work should perform sensitivity\n")
+    f.write("analysis using the actual GPLVM model with varied hyperparameters to assess true robustness.\n")
 
-print("  ✓ Saved markdown table to pipeline_results_scvi/sensitivity/hyperparam_sensitivity_table.md")
+print(f"Saved markdown table to {table_path}")
 
-# ============================================================================
 # Create visualization
-# ============================================================================
-print("\n" + "="*70)
-print("Creating visualization")
-print("="*70)
+print("\nCreating visualization")
 
 fig, axes = plt.subplots(2, 2, figsize=(12, 10))
 
@@ -323,10 +319,9 @@ ax.set_xlabel('Lengthscale (ℓ)')
 ax.set_ylabel('Noise Variance (σ²)')
 
 plt.tight_layout()
-plt.savefig('pipeline_results_scvi/sensitivity/hyperparam_sensitivity_heatmaps.png', dpi=300, bbox_inches='tight')
-print("  ✓ Saved visualization to pipeline_results_scvi/sensitivity/hyperparam_sensitivity_heatmaps.png")
+viz_path = os.path.join(SENSITIVITY_DIR, 'hyperparam_sensitivity_heatmaps.png')
+plt.savefig(viz_path, dpi=300, bbox_inches='tight')
+print(f"Saved visualization to {viz_path}")
 
-print("\n" + "="*70)
-print("COMPLETE")
-print("="*70)
+print("\nAnalysis complete")
 
