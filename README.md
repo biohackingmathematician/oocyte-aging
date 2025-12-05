@@ -223,7 +223,19 @@ pip install -r requirements-minimal.txt
    - **Age diversity**: 72 oocytes from 37 women enables continuous trajectory modeling
    - **Stage representation**: Includes GV, MI, and MII stages across age range
    
-   **Note**: Alternative datasets were evaluated (e.g., Machlin et al. 2025, 144 oocytes) but were deemed unsuitable as they focused on cryopreservation effects rather than aging, with limited age range (16-27 years, only 3 donors). The Llonch et al. dataset remains optimal for continuous aging trajectory analysis.
+   ### Dataset Selection Note
+   
+   We evaluated integrating Machlin et al. 2025 (144 oocytes, Zenodo 13224872) but determined it **unsuitable for aging analysis**:
+   - Study focus: Cryopreservation (fresh vs. frozen), not aging
+   - Only 3 donors aged 16, 18, and 27 years
+   - Missing critical reproductive decline window (35-45 years)
+   
+   Our dataset (Llonch et al. 2021) provides:
+   - Explicit aging study design
+   - 37 donors with continuous age coverage (18-43 years)
+   - Appropriate statistical power for trajectory modeling
+   
+   See `PROFESSOR_FEEDBACK_STATUS.md` for detailed evaluation.
    
    **Rationale for Subsetting to 20 oocytes**: 
      - Focus on the GV→MI transition (primary maturation checkpoint)
